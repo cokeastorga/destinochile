@@ -6,6 +6,7 @@
 
     const frases = [
     'Donde comienza tu viaje.',
+    'Valoramos el Trabajo.',
     'Explora. Descubre. Disfruta.',
     'Tu próxima aventura empieza aquí.',
     'Servicio turístico personalizado.',
@@ -23,7 +24,7 @@
   onMount(() => {
     const timer = setTimeout(() => {
       if (!redirigido) goto('/login');
-    }, 7000); // redirige automáticamente en 5 segundos
+    }, 10000); // redirige automáticamente en 5 segundos
     return () => clearTimeout(timer);
   });
 
