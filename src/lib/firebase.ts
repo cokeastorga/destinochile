@@ -1,9 +1,7 @@
-// src/lib/firebase.ts
 import { initializeApp } from 'firebase/app';
-import { getAuth,  browserLocalPersistence, setPersistence, onAuthStateChanged  } from 'firebase/auth';
+import { getAuth, browserLocalPersistence, setPersistence, onAuthStateChanged } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import { getFunctions } from 'firebase/functions'; 
-
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -17,7 +15,12 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const functions = getFunctions(app);
+
+export const functions = getFunctions(app, 'us-central1');
+
+if (location.hostname === 'localhost') {
+  connectFunctionsEmulator(functions, 'localhost', 5001);
+}
 
 setPersistence(auth, browserLocalPersistence)
   .then(() => {

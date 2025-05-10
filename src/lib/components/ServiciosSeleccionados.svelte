@@ -61,38 +61,38 @@
 <table class="table-auto w-full text-center border text-sm">
   <thead class="bg-gray-100">
     <tr>
-     <th class="px-4 py-2">Ciudad</th>
-     <th class="px-4 py-2">Proveedor</th>
-     <th class="px-4 py-2">Servicio</th>
-     <th class="px-4 py-2">Tipo de Habitación</th>   
-     <th class="px-4 py-2">Capacidad</th>
-     <th class="px-4 py-2">Descripción</th>
-     <th class="px-4 py-2">Categoria</th>
-     <th class="px-4 py-2">Segmento</th>
-		 <th class="px-4 py-2">Tour Privado o Regular </th>
-		 <th class="px-4 py-2">Half Day Full Day</th>
-     <th class="px-4 py-2">Check-in</th>
-     <th class="px-4 py-2">Check-out</th>        
-     <th class="px-4 py-2">Markup</th>
-     <th class="px-4 py-2">Noches</th>
-     <th class="px-4 py-2">Habitaciones</th>
-     <th class="px-4 py-2">Subtotal</th>
+     <th class="px-2 py-1">Ciudad</th>
+     <th class="px-2 py-1">Proveedor</th>
+     <th class="px-2 py-1">Servicio</th>
+     <th class="px-2 py-1">Tipo de Habitación</th>   
+     <th class="px-2 py-1">Capacidad</th>
+     <th class="px-2 py-1">Descripción</th>
+ <!--    <th class="px-2 py-1">Categoria</th>
+     <th class="px-2 py-1">Segmento</th>
+		 <th class="px-2 py-1">Tour Privado o Regular </th>
+		 <th class="px-2 py-1">Half Day Full Day</th> -->
+     <th class="px-2 py-1">Check-in</th>
+     <th class="px-2 py-1">Check-out</th>        
+     <th class="px-2 py-1">Markup</th>
+     <th class="px-2 py-1">Noches</th>
+     <th class="px-2 py-1">Habitaciones</th>
+     <th class="px-2 py-1">Subtotal</th>
     </tr>
   </thead>
   <tbody>
     {#each serviciosSeleccionados as servicio, index}
     <tr class="border-t">
-      <td class="px-4 py-2">{servicio.ciudad}</td>
-      <td class="px-4 py-2">{servicio.proveedor}</td>
-      <td class="px-4 py-2">{servicio.nombreProducto}</td>
-      <td class="px-4 py-2">{servicio.tipoHabitacion}</td>    
-      <td class="px-4 py-2">{servicio.ocupacion}</td>
-      <td class="px-4 py-2">{servicio.descripcion}</td>
-      <td class="px-4 py-2">{servicio.categoria}</td>
-      <td class="px-4 py-2">{servicio.segmento}</td>
-			<td class="px-4 py-2">{servicio.tourPrivado}</td>
-			<td class="px-4 py-2">{servicio.halfDay}</td>
-      <td class="px-4 py-2">
+      <td class="px-2 py-1">{servicio.ciudad}</td>
+      <td class="px-2 py-1">{servicio.proveedor}</td>
+      <td class="px-2 py-1">{servicio.nombreProducto}</td>
+      <td class="px-2 py-1">{servicio.tipoHabitacion}</td>    
+      <td class="px-2 py-1">{servicio.ocupacion}</td>
+      <td class="px-2 py-1">{servicio.descripcion}</td>
+   <!--   <td class="px-2 py-1">{servicio.categoria}</td>
+      <td class="px-2 py-1">{servicio.segmento}</td>
+			<td class="px-2 py-1">{servicio.tourPrivado}</td>
+			<td class="px-2 py-1">{servicio.halfDay}</td> -->
+      <td class="px-2 py-1">
         <input
           type="date"
           bind:value={servicio.checkin}

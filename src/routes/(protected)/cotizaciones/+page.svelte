@@ -441,7 +441,7 @@ function groupByProveedor(servicios: any[]) {
 
 
 
-<div class="mx-auto w-full p-6">
+<div class="mx-auto w-full p-3">
 	{#if cargando}
 	<div class="fixed inset-0 z-50 flex flex-col items-center justify-center space-y-4 bg-white bg-opacity-60">
 		<div class="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
@@ -510,42 +510,42 @@ function groupByProveedor(servicios: any[]) {
 		<table class="w-full border-t border-gray-300 text-left text-sm text-gray-700">
 			<thead class="bg-gray-100 text-xs uppercase text-gray-700">
 				<tr>
-					<th class="px-4 py-2">Ciudad</th>
-					<th class="px-4 py-2">Tipo de Servicio</th>
-					<th class="px-4 py-2">Servicio / Producto</th>
-					<th class="px-4 py-2">Nombre Producto</th>
-					<th class="px-4 py-2">Tipo de Habitación</th>
-					<th class="px-4 py-2">Capacidad</th>
-					<th class="px-4 py-2">Categoría</th>
-					<th class="px-4 py-2">Segmento</th>
-					<th class="px-4 py-2">Privado/Regular</th>
-					<th class="px-4 py-2">Half/Full Day</th>
-					<th class="px-4 py-2">Descripción</th>
-					<th class="px-4 py-2">Temporada</th>
-					<th class="px-4 py-2">Moneda</th>
-					<th class="px-4 py-2">Tarifa Neta</th>
-					<th class="px-4 py-2">Tarifa Final</th>
-					<th class="px-4 py-2">Seleccionar</th>
+					<th class="text-center px-4 py-2">Ciudad</th>
+					<th class="text-center px-2 py-1">Tipo de Servicio</th>
+					<th class="text-center px-2 py-1">Servicio / Producto</th>
+					<th class="text-center px-2 py-1">Nombre Producto</th>
+					<th class="text-center px-2 py-1">Tipo de Habitación</th>
+					<th class="text-center px-2 py-1">Capacidad</th>
+					<th class="text-center px-2 py-1">Categoría</th>
+				<!--	<th class="text-center px-2 py-1">Segmento</th>
+					<th class="text-center px-2 py-1">Privado/ Regular</th>
+					<th class="text-center px-2 py-1">Half/ Full Day</th> -->
+					<th class="text-center px-2 py-1">Descripción</th>
+					<th class="text-center px-2 py-1">Temporada</th>
+			<!--		<th class="text-center px-2 py-1">Moneda</th>
+					<th class="text-center px-2 py-1">Tarifa Neta</th> -->
+					<th class="text-center px-2 py-1">Tarifa Final</th>
+					<th class="text-center px-2 py-1">Seleccionar</th>
 				</tr>
 			</thead>
 			<tbody>
 				{#each servicios as servicio, index (servicio.id)}
 				<tr class="border-t">
-					<td class="px-4 py-2">{servicio.ciudad}</td>
-					<td class="px-4 py-2">{servicio.tipoServicio}</td>
-					<td class="px-4 py-2">{servicio.servicioProducto}</td>
-					<td class="px-4 py-2">{servicio.nombreProducto}</td>
-					<td class="px-4 py-2">{servicio.tipoHabitacion}</td>
-					<td class="px-4 py-2">{servicio.ocupacion}</td>
-					<td class="px-4 py-2">{servicio.categoria}</td>
-					<td class="px-4 py-2">{servicio.segmento}</td>
-					<td class="px-4 py-2">{servicio.tourPrivado}</td>
-					<td class="px-4 py-2">{servicio.halfDay}</td>
-					<td class="px-4 py-2">{servicio.descripcion}</td>
-					<td class="px-4 py-2">{servicio.temporada}</td>
-					<td class="px-4 py-2">{servicio.monedaOriginal}</td>
-					<td class="px-4 py-2">{servicio.tarifa_neta} {servicio.monedaOriginal}</td>
-					<td class="px-4 py-2">
+					<td class="text-center px-2 py-1">{servicio.ciudad}</td>
+					<td class="text-center px-2 py-1">{servicio.tipoServicio}</td>
+					<td class="text-center px-2 py-1">{servicio.servicioProducto}</td>
+					<td class="text-center px-2 py-1">{servicio.nombreProducto}</td>
+					<td class="text-center px-2 py-1">{servicio.tipoHabitacion}</td>
+					<td class="text-center px-2 py-1">{servicio.ocupacion}</td>
+					<td class="text-center px-2 py-1">{servicio.categoria}</td>
+				<!--	<td class="text-center px-2 py-1">{servicio.segmento}</td> -->
+				<!--	<td class="text-center px-2 py-1">{servicio.tourPrivado}</td> 
+					<td class="text-center px-2 py-1">{servicio.halfDay}</td> -->
+					<td class="text-center px-2 py-1">{servicio.descripcion}</td>
+					<td class="text-center px-2 py-1">{servicio.temporada}</td>
+				<!--	<td class="text-center px-2 py-1">{servicio.monedaOriginal}</td>-->
+			<!--		<td class="text-center px-2 py-1">{servicio.tarifa_neta} {servicio.monedaOriginal}</td> -->
+					<td class="text-center px-4 py-2">
 						{#key servicio.id}
 						{(() => {
 							const { tarifa, monedaFinal } = calcularTarifaFinal(

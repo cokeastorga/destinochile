@@ -6,7 +6,8 @@
 	
 	import { updateDoc, doc } from 'firebase/firestore';
 
-
+let reservasOriginal: any[] = [];
+	let reservas: any[] = [];
 	let cotizacionesOriginal: any[] = [];
 	let cotizaciones: any[] = [];
 	let cargando = true;
@@ -111,24 +112,24 @@
 <table class="w-full table-auto border-collapse border border-gray-300 text-sm">
 	<thead class="bg-gray-100">
 		<tr>
-			<th class="border px-4 py-2">ID</th>
-			<th class="border px-4 py-2">Cliente</th>
-			<th class="border px-4 py-2">Fecha</th>
-			<th class="border px-4 py-2">Estado</th>
-			<th class="border px-4 py-2">Total</th>
-			<th class="border px-4 py-2">Acción</th>
+			<th class="border text-center px-4 py-2">ID</th>
+			<th class="border text-center px-4 py-2">Cliente</th>
+			<th class="border text-center px-4 py-2">Fecha</th>
+			<th class="border text-center px-4 py-2">Estado</th>
+			<th class="border text-center px-4 py-2">Total</th>
+			<th class="border text-center px-4 py-2">Acción</th>
 		</tr>
 	</thead>
 	<tbody>
 		{#each cotizaciones as c}
 		<tr>
-			<td class="border px-4 py-2 font-mono">{c.id}</td>
-			<td class="border px-4 py-2">{c.email}</td>
-			<td class="border px-4 py-2">{c.fecha.toLocaleDateString()}</td>
-			<td class="border px-4 py-2">
-				<div class="flex items-center gap-2">
+			<td class="border text-center px-4 py-2 font-mono">{c.id}</td>
+			<td class="border text-center px-4 py-2">{c.email}</td>
+			<td class="border text-center px-4 py-2">{c.fecha.toLocaleDateString()}</td>
+			<td class="border text-center px-4 py-2">
+				<div class=" items-center gap-4">
 					<span
-						class="rounded px-2 py-1 text-xs font-semibold"
+						class=" text-center rounded px-6 py-1 text-sm font-semibold"
 						class:bg-yellow-100={c.estado === 'Pendiente'}
 						class:bg-green-100={c.estado === 'Confirmada'}
 						class:bg-red-100={c.estado === 'Anulada'}
@@ -141,7 +142,7 @@
 			
 					<select
 						bind:value={c.estado}
-						class="rounded border px-2 py-1 text-sm"
+						class="rounded  border px-6 py-1 text-sm"
 						on:change={() => actualizarEstado(c.id, c.estado)}
 					>
 						<option value="Pendiente">Pendiente</option>
@@ -152,8 +153,8 @@
 			</td>
 			
 
-		<td class="border px-4 py-2">${c.totalGeneral?.toLocaleString('es-CL')}</td>
-<td class="border px-4 py-2 space-x-2">
+		<td class="border text-center px-4 py-2">${c.totalGeneral?.toLocaleString('es-CL')}</td>
+<td class="border text-center px-4 py-2 space-x-2">
 	<button
 		class="text-blue-600 hover:underline"
 		on:click={() => goto(`/cotizaciones/${c.id}`)}
@@ -163,6 +164,107 @@
 	<button
 		class="text-red-600 hover:underline"
 		on:click={() => eliminarCotizacion(c.id)}
+	>
+		Eliminar
+	</button>
+</td>
+
+<!-- seccion reservas -->
+
+		</tr>
+		{/each}
+	</tbody>
+</table>
+{/if}
+
+<hr class="my-8" />
+<hr class="my-8" />
+
+<h1 class="mb-6 text-3xl font-bold">Dashboard de Reservas</h1>
+
+<!-- Filtros -->
+<div class="mb-6 flex flex-wrap gap-4 text-sm">
+	<input type="text" placeholder="Buscar cliente por email..." bind:value={filtroCliente} on:input={aplicarFiltros}
+		class="rounded border px-3 py-1" />
+
+	<select bind:value={filtroEstado} on:change={aplicarFiltros} class="rounded border px-3 py-1">
+		<option value="">Todos los estados</option>
+		<option value="Pendiente">Pendiente</option>
+		<option value="Confirmada">Confirmada</option>
+		<option value="Anulada">Anulada</option>
+	</select>
+
+	<button on:click={()=> {
+		ordenDesc = !ordenDesc;
+		aplicarFiltros();
+		}}
+		class="rounded bg-blue-600 px-4 py-1 text-white hover:bg-blue-700"
+		>
+		Orden: {ordenDesc ? '↓ Recientes primero' : '↑ Antiguas primero'}
+	</button>
+</div>
+
+<!-- Tabla -->
+{#if cargando}
+<p class="text-gray-500">Cargando reservas...</p>
+{:else if reservas.length === 0}
+<p class="text-gray-500">No hay reservas que coincidan con los filtros.</p>
+{:else}
+<table class="w-full table-auto border-collapse border border-gray-300 text-sm">
+	<thead class="bg-gray-100">
+		<tr>
+			<th class="border text-center px-4 py-2">ID</th>
+			<th class="border text-center px-4 py-2">Cliente</th>
+			<th class="border text-center px-4 py-2">Fecha</th>
+			<th class="border text-center px-4 py-2">Estado</th>
+			<th class="border text-center px-4 py-2">Total</th>
+			<th class="border text-center px-4 py-2">Acción</th>
+		</tr>
+	</thead>
+	<tbody>
+		{#each reservas as c}
+		<tr>
+			<td class="border text-center px-4 py-2 font-mono">{c.id}</td>
+			<td class="border text-center px-4 py-2">{c.email}</td>
+			<td class="border text-center px-4 py-2">{c.fecha.toLocaleDateString()}</td>
+			<td class="border text-center px-4 py-2">
+				<div class=" items-center gap-2">
+					<span
+						class="rounded items-center px-6 py-1 text-sm font-semibold"
+						class:bg-yellow-100={c.estado === 'Pendiente'}
+						class:bg-green-100={c.estado === 'Confirmada'}
+						class:bg-red-100={c.estado === 'Anulada'}
+						class:text-yellow-800={c.estado === 'Pendiente'}
+						class:text-green-800={c.estado === 'Confirmada'}
+						class:text-red-800={c.estado === 'Anulada'}
+					>
+						{c.estado}
+					</span>
+			
+					<select
+						bind:value={c.estado}
+						class="rounded items-center border px-2 py-1 text-sm"
+						on:change={() => actualizarEstado(c.id, c.estado)}
+					>
+						<option value="Pendiente">Pendiente</option>
+						<option value="Confirmada">Confirmada</option>
+						<option value="Anulada">Anulada</option>
+					</select>
+				</div>
+			</td>
+			
+
+		<td class="border text-center px-4 py-2">${c.totalGeneral?.toLocaleString('es-CL')}</td>
+<td class="border text-center px-4 py-2 space-x-2">
+	<button
+		class="text-blue-600 hover:underline"
+		on:click={() => goto(`/reservas/${c.id}`)}
+	>
+		Ver detalle
+	</button>
+	<button
+		class="text-red-600 hover:underline"
+		on:click={() => eliminarReserva(c.id)}
 	>
 		Eliminar
 	</button>
