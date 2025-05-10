@@ -31,8 +31,12 @@
     }
   };
 </script>
+<video autoplay muted loop playsinline class="video-fondo">
+  <source src="/videos/fondo2.mp4" type="video/mp4" />
+  Tu navegador no soporta el tag de video.
+</video>
 
-<div class="min-h-screen bg-gradient-to-br from-sky-600 to-indigo-800 flex items-center justify-center px-4 py-10 text-white">
+<div class="min-h-screen relative z-10 flex items-center justify-center px-4 py-10 text-white">
   <div class="bg-white text-gray-800 shadow-xl rounded-xl px-8 py-10 w-full max-w-md animate-fade-in-slow">
     <!-- Logo centrado -->
     <div class="flex justify-center mb-6">
@@ -118,4 +122,17 @@
   .animate-fade-in-slow {
     animation: fade-in-slow 0.8s ease-out forwards;
   }
+
+  .video-fondo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  filter: brightness(0.5); /* Opcional: oscurece para mejor contraste */
+}
+
+
 </style>

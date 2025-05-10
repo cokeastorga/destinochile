@@ -135,7 +135,7 @@
 
 	function generarIdReserva(): string {
 	const numero = Math.floor(1000 + Math.random() * 9000); // 4 dígitos aleatorios
-	return `CT-DCH${numero}`;
+	return `FF-DCH${numero}`;
 }
 
 

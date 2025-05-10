@@ -33,7 +33,14 @@
   }
 </script>
 
-<div class="min-h-screen bg-gradient-to-br from-sky-600 to-indigo-800 flex flex-col items-center justify-center text-white px-6 text-center">
+<div class="min-h-screen bg-gradient-to-br from-sky-600 to-indigo-800 flex flex-col items-center justify-center text-white px-6 text-center relative z-10">
+
+<video autoplay muted loop playsinline class="video-fondo">
+  <source src="/videos/fondo.mp4" type="video/mp4" />
+  Tu navegador no soporta el tag de video.
+</video>
+
+
   <!-- LOGO -->
   <img src="/logo.jpg" alt="Logo Destino Chile" class="w-36 h-36 mb-6 rounded-full drop-shadow-xl animate-fade-in-slow" />
 
@@ -88,4 +95,16 @@
   @keyframes spin {
     to { transform: rotate(360deg); }
   }
+
+  .video-fondo {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  filter: brightness(0.5); /* oscurece un poco para mejorar legibilidad del texto */
+}
+
 </style>
