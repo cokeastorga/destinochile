@@ -440,7 +440,7 @@ function groupByProveedor(servicios: any[]) {
 
 
 
-
+<hr class="my-1" />
 <div class="mx-auto w-full p-3">
 	{#if cargando}
 	<div class="fixed inset-0 z-50 flex flex-col items-center justify-center space-y-4 bg-white bg-opacity-60">

@@ -83,7 +83,7 @@
 		editando = true;
 		idReserva = editId;
 
-		const ref = doc(db, 'Reservas', editId);
+		const ref = doc(db, 'reservas', editId);
 		const snap = await getDoc(ref);
 
 		if (snap.exists()) {
@@ -212,8 +212,8 @@ const totalGeneral = serviciosConSubtotales.reduce((acc, s) => acc + (s.subtotal
 	};
 
 	try {
-		const docRef = doc(db, 'Reservas', idFinal);
-		await setDoc(docRef, Reserva);
+		const docRef = doc(db, 'reservas', idFinal);
+		await setDoc(docRef, reserva);
 		alert(editando ? 'Reserva actualizada correctamente.' : `Reserva guardada con éxito. ID: ${idFinal}`);
 		serviciosSeleccionados = [];
 	} catch (error) {
@@ -437,7 +437,7 @@ function groupByProveedor(servicios: any[]) {
 
 
 </script>
-
+<hr class="my-1" />
 
 <div class="mx-auto w-full p-3">
 	{#if cargando}

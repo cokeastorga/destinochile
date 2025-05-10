@@ -6,7 +6,7 @@
 	
 	import { updateDoc, doc } from 'firebase/firestore';
 
-let reservasOriginal: any[] = [];
+	let reservasOriginal: any[] = [];
 	let reservas: any[] = [];
 	let cotizacionesOriginal: any[] = [];
 	let cotizaciones: any[] = [];
@@ -17,31 +17,54 @@ let reservasOriginal: any[] = [];
 	let ordenDesc = true;
 
 	onMount(async () => {
-		const snapshot = await getDocs(collection(db, 'cotizaciones'));
-		cotizacionesOriginal = snapshot.docs.map((doc) => {
-			const data = doc.data();
-			return {
-				id: doc.id,
-				...data,
-				fecha: data.creadoEn?.toDate?.() ?? new Date(0)
-			};
-		});
-
-		aplicarFiltros();
-		cargando = false;
+	const snapshot = await getDocs(collection(db, 'cotizaciones'));
+	cotizacionesOriginal = snapshot.docs.map((doc) => {
+		const data = doc.data();
+		return {
+			id: doc.id,
+			...data,
+			fecha: data.creadoEn?.toDate?.() ?? new Date(0)
+		};
 	});
 
+	const snapshotReservas = await getDocs(collection(db, 'reservas'));
+	reservasOriginal = snapshotReservas.docs.map((doc) => {
+		const data = doc.data();
+		return {
+			id: doc.id,
+			...data,
+			fecha: data.creadoEn?.toDate?.() ?? new Date(0)
+		};
+	});
+	reservas = reservasOriginal;
 
-	async function actualizarEstado(id: string, nuevoEstado: string) {
-		try {
-			const ref = doc(db, 'cotizaciones', id);
-			await updateDoc(ref, { estado: nuevoEstado });
-			console.log(`Estado actualizado a ${nuevoEstado} para ${id}`);
-		} catch (error) {
-			console.error('Error al actualizar estado:', error);
-			alert('No se pudo actualizar el estado. Intenta nuevamente.');
+	aplicarFiltros();
+	cargando = false;
+});
+
+
+		async function actualizarEstado(id: string, nuevoEstado: string) {
+			try {
+				const ref = doc(db, 'cotizaciones', id);
+				await updateDoc(ref, { estado: nuevoEstado });
+				console.log(`Estado actualizado a ${nuevoEstado} para ${id}`);
+			} catch (error) {
+				console.error('Error al actualizar estado:', error);
+				alert('No se pudo actualizar el estado. Intenta nuevamente.');
 		}
 	}
+
+	async function actualizarEstadoReserva(id: string, nuevoEstado: string) {
+	try {
+		const ref = doc(db, 'reservas', id);
+		await updateDoc(ref, { estado: nuevoEstado });
+		console.log(`Estado de reserva actualizado a ${nuevoEstado} para ${id}`);
+	} catch (error) {
+		console.error('Error al actualizar estado de reserva:', error);
+		alert('No se pudo actualizar el estado de la reserva. Intenta nuevamente.');
+	}
+}
+
 
 
 	function aplicarFiltros() {
@@ -77,8 +100,43 @@ let reservasOriginal: any[] = [];
 	}
 }
 
-</script>
+function aplicarFiltrosReservas() {
+	reservas = reservasOriginal
+		.filter((r) => {
+			const coincideEstado = filtroEstado ? (r.estado ?? 'Pendiente') === filtroEstado : true;
+			const coincideCliente = filtroCliente
+				? r.email?.toLowerCase().includes(filtroCliente.toLowerCase())
+				: true;
+			return coincideEstado && coincideCliente;
+		})
+		.sort((a, b) =>
+			ordenDesc
+				? b.fecha.getTime() - a.fecha.getTime()
+				: a.fecha.getTime() - b.fecha.getTime()
+		);
+}
 
+
+async function eliminarReserva(id: string) {
+	const confirmar = confirm(`¿Estás seguro que deseas eliminar la reserva ${id}? Esta acción no se puede deshacer.`);
+	if (!confirmar) return;
+
+	try {
+		await deleteDoc(doc(db, 'reservas', id));
+		alert(`Reserva ${id} eliminada correctamente.`);
+
+		// Quitar del array local sin volver a consultar Firestore
+		reservasOriginal = reservasOriginal.filter(r => r.id !== id);
+		reservas = reservasOriginal;
+	} catch (error) {
+		console.error('Error al eliminar reserva:', error);
+		alert('No se pudo eliminar la reserva. Intenta nuevamente.');
+	}
+}
+
+
+</script>
+<hr class="my-4" />
 <h1 class="mb-6 text-3xl font-bold">Dashboard de Cotizaciones</h1>
 
 <!-- Filtros -->
@@ -184,15 +242,30 @@ let reservasOriginal: any[] = [];
 
 <!-- Filtros -->
 <div class="mb-6 flex flex-wrap gap-4 text-sm">
-	<input type="text" placeholder="Buscar cliente por email..." bind:value={filtroCliente} on:input={aplicarFiltros}
-		class="rounded border px-3 py-1" />
+	<input
+	type="text"
+	placeholder="Buscar cliente por email..."
+	bind:value={filtroCliente}
+	on:input={() => {
+		aplicarFiltros();
+		aplicarFiltrosReservas();
+	}}
+	class="rounded border px-3 py-1"
+/>
 
-	<select bind:value={filtroEstado} on:change={aplicarFiltros} class="rounded border px-3 py-1">
-		<option value="">Todos los estados</option>
-		<option value="Pendiente">Pendiente</option>
-		<option value="Confirmada">Confirmada</option>
-		<option value="Anulada">Anulada</option>
-	</select>
+	<select
+	bind:value={filtroEstado}
+	on:change={() => {
+		aplicarFiltros();
+		aplicarFiltrosReservas();
+	}}
+	class="rounded border px-3 py-1"
+>
+	<option value="">Todos los estados</option>
+	<option value="Pendiente">Pendiente</option>
+	<option value="Confirmada">Confirmada</option>
+	<option value="Anulada">Anulada</option>
+</select>
 
 	<button on:click={()=> {
 		ordenDesc = !ordenDesc;
@@ -244,7 +317,7 @@ let reservasOriginal: any[] = [];
 					<select
 						bind:value={c.estado}
 						class="rounded items-center border px-2 py-1 text-sm"
-						on:change={() => actualizarEstado(c.id, c.estado)}
+						on:change={() => actualizarEstadoReserva(c.id, c.estado)}
 					>
 						<option value="Pendiente">Pendiente</option>
 						<option value="Confirmada">Confirmada</option>

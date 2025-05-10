@@ -40,7 +40,7 @@
 
   const menuItems = [
     { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { label: 'Cotizador', href: '/cotizaciones', icon: FileText },
+    { label: 'Cotización', href: '/cotizaciones', icon: FileText },
     { label: 'Reservas', href: '/reservas', icon: CalendarCheck },
     { label: 'Clientes', href: '/clientes', icon: Users },
     { label: 'Proveedores', href: '/proveedores', icon: Briefcase },
@@ -55,7 +55,7 @@
   <aside class="w-64 bg-gradient-to-b from-blue-700 to-indigo-800 text-white flex flex-col p-6 shadow-lg">
     <!-- Logo -->
      <div class="flex justify-center mb-4">
-      <img src="/logo.jpg" alt="Logo Destino Chile" class="w-20 h-20 rounded-full shadow-md border-4 border-white" />
+      <img src="/logo.jpg" alt="Logo Destino Chile" class="w-40 h-40 rounded-full shadow-md border-4 border-white" />
     </div>
     
     <!-- Título -->

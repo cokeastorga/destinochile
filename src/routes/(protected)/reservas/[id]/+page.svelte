@@ -1,4 +1,4 @@
-<!-- src/routes/cotizacion/[id]/+page.svelte -->
+<!-- src/routes/Reserva/[id]/+page.svelte -->
 <script lang="ts">
     import { db } from '$lib/firebase';
     import { doc, getDoc, updateDoc, arrayUnion, Timestamp } from 'firebase/firestore';
@@ -7,12 +7,11 @@
     import { format } from 'date-fns';
     import { onMount } from 'svelte';
     import { generarPDFDesdeHtml, descargarPDFDesdeHtml } from '$lib/utils/generarPDF';
-    import { enviarCotizacionPorCorreo } from '$lib/api/enviarCorreoCliente';
     import { differenceInDays } from 'date-fns';
     import { getAuth } from 'firebase/auth';
 
     let mostrarAlertaSeguimiento = false;
-    let cotizacion: any = null;
+    let reserva: any = null;
     let cargando = true;
     let enviandoCorreo = false;
     let mensaje = '';
@@ -29,23 +28,23 @@
         mensaje = '';
         const auth = getAuth();
         const usuarioActual = auth.currentUser?.email || 'usuario_desconocido';
-        await updateDoc(doc(db, 'cotizaciones', cotizacion.id), {
+        await updateDoc(doc(db, 'reservas', reserva.id), {
             enviadaEl: Timestamp.now(),
             seguimientoRealizado: false,
             eventos: arrayUnion({
                 tipo: 'enviada',
                 fecha: Timestamp.now(),
                 usuario: usuarioActual,
-                comentario: 'Cotización enviada por correo'
+                comentario: 'Reserva enviada por correo'
             })
         });
 
         try {
             const pdf = await generarPDFDesdeHtml('vista-pdf');
-            await enviarCotizacionPorCorreo({
-                para: cotizacion.email,
-                asunto: 'Cotización personalizada – Destino Chile',
-                mensaje: 'Estimado cliente, adjuntamos su cotización solicitada.',
+            await enviarReservaPorCorreo({
+                para: reserva.email,
+                asunto: 'reservación personalizada – Destino Chile',
+                mensaje: 'Estimado cliente, adjuntamos su reservación solicitada.',
                 pdfBlob: pdf
             });
             mensaje = 'Correo enviado con éxito';
@@ -56,11 +55,11 @@
         }
     }
 
-    async function cargarCotizacion(id: string) {
-        const ref = doc(db, 'cotizaciones', id);
+    async function cargarReserva(id: string) {
+        const ref = doc(db, 'reservas', id);
         const snap = await getDoc(ref);
         if (snap.exists()) {
-            cotizacion = { id, ...snap.data() };
+            reserva = { id, ...snap.data() };
         } else {
             goto('/dashboard');
             return;
@@ -70,7 +69,7 @@
 
     async function marcarSeguimientoRealizado() {
         try {
-            await updateDoc(doc(db, 'cotizaciones', cotizacion.id), {
+            await updateDoc(doc(db, 'reservas', reserva.id), {
                 seguimientoRealizado: true
             });
             mensaje = 'Seguimiento marcado como realizado.';
@@ -84,18 +83,18 @@
         const unsubscribe = page.subscribe(($page) => {
             const id = $page.params.id;
             if (id) {
-                cargarCotizacion(id);
+                cargarReserva(id);
             }
         });
         return () => unsubscribe();
     });
 
     $: if (
-        cotizacion?.enviadaEl &&
-        cotizacion.estado === 'Pendiente' &&
-        !cotizacion.seguimientoRealizado
+        reserva?.enviadaEl &&
+        reserva.estado === 'Pendiente' &&
+        !reserva.seguimientoRealizado
     ) {
-        const enviada = cotizacion.enviadaEl?.toDate?.() ?? null;
+        const enviada = reservas.enviadaEl?.toDate?.() ?? null;
         if (enviada) {
             const dias = differenceInDays(new Date(), enviada);
             mostrarAlertaSeguimiento = dias >= 3;
@@ -197,15 +196,15 @@
     background-color: #f3f4f6 !important;
   }
 </style>
-<hr class="my-1" />
+
 {#if cargando}
   <div class="flex justify-center items-center h-64">
     <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-600"></div>
-    <p class="ml-3 text-gray-600 font-medium">Cargando cotización...</p>
+    <p class="ml-3 text-gray-600 font-medium">Cargando reservación...</p>
   </div>
-{:else if !cotizacion}
+{:else if !reserva}
   <div class="text-center py-8">
-    <p class="text-red-600 font-semibold text-lg">Cotización no encontrada</p>
+    <p class="text-red-600 font-semibold text-lg">Reservación no encontrada</p>
   </div>
 {:else}
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -230,7 +229,7 @@
         Seguimiento realizado
       </button>
       <button
-        on:click={() => goto(`/cotizaciones?edit=${cotizacion.id}`)}
+        on:click={() => goto(`/reservas?edit=${reserva.id}`)}
         class="flex items-center bg-amber-500 hover:bg-amber-600 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition duration-200"
       >
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,7 +256,7 @@
         {/if}
       </button>
       <button
-        on:click={() => descargarPDFDesdeHtml('vista-pdf', `cotizacion-${cotizacion.id}.pdf`)}
+        on:click={() => descargarPDFDesdeHtml('vista-pdf', `Reserva-${reserva.id}.pdf`)}
         class="flex items-center bg-blue-600 hover:bg-blue-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition duration-200"
       >
         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -286,7 +285,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <p>
-            Han pasado más de 3 días desde que esta cotización fue enviada y aún está pendiente. Realiza seguimiento con el cliente.
+            Han pasado más de 3 días desde que esta reservación fue enviada y aún está pendiente. Realiza seguimiento con el cliente.
           </p>
         </div>
       </div>
@@ -299,8 +298,8 @@
         <div class="flex items-center gap-6">
           <img src="/logo.jpg" alt="Destino Chile" class="h-16 w-auto object-contain" />
           <div>
-            <p class="text-sm text-gray-500">Cotización</p>
-            <h1 class="text-3xl font-bold text-gray-900">CT-DCH{cotizacion.id.slice(-4)}</h1>
+            <p class="text-sm text-gray-500">Reservación</p>
+            <h1 class="text-3xl font-bold text-gray-900">CT-DCH{reserva.id.slice(-4)}</h1>
           </div>
         </div>
         <div class="text-right">
@@ -313,35 +312,35 @@
       <section class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 ml-4 text-sm">
         <div>
           <span class="font-semibold text-center text-gray-600">Correo Cliente:</span>
-          <p class="text-gray-900">{cotizacion.email}</p>
+          <p class="text-gray-900">{reserva.email}</p>
         </div>
         <div>
           <span class="font-semibold text-center text-gray-600">Ejecutivo Responsable:</span>
-          <p class="text-gray-900">{cotizacion.ejecutivo}</p>
+          <p class="text-gray-900">{reserva.ejecutivo}</p>
         </div>
         <div>
           <span class="font-semibold text-center text-gray-600">Tipo Cliente:</span>
-          <p class="text-gray-900">{cotizacion.tipoCliente}</p>
+          <p class="text-gray-900">{reserva.tipoCliente}</p>
         </div>
         <div>
           <span class="font-semibold text-center text-gray-600">Ciudad de Destino:</span>
-          <p class="text-gray-900">{cotizacion.destino}</p>
+          <p class="text-gray-900">{reserva.destino}</p>
         </div>
         <div>
           <span class="font-semibold text-center text-gray-600">Check-in:</span>
-          <p class="text-gray-900">{formatear(cotizacion.fechaInicio)}</p>
+          <p class="text-gray-900">{formatear(reserva.fechaInicio)}</p>
         </div>
         <div>
           <span class="font-semibold text-center text-gray-600">Check-out:</span>
-          <p class="text-gray-900">{formatear(cotizacion.fechaFin)}</p>
+          <p class="text-gray-900">{formatear(reserva.fechaFin)}</p>
         </div>
         <div>
           <span class="font-semibold text-center text-gray-600">Cantidad de Pasajeros:</span>
-          <p class="text-gray-900">{cotizacion.cantidadPasajeros}</p>
+          <p class="text-gray-900">{reserva.cantidadPasajeros}</p>
         </div>
         <div>
           <span class="font-semibold text-center text-gray-600">Estado:</span>
-          <span class="inline-block px-3 py-1 text-sm font-medium text-amber-800 bg-amber-100 rounded-full">{cotizacion.estado}</span>
+          <span class="inline-block px-3 py-1 text-sm font-medium text-amber-800 bg-amber-100 rounded-full">{reserva.estado}</span>
         </div>
       </section>
       
@@ -370,7 +369,7 @@
             </tr>
           </thead>
           <tbody>
-            {#each cotizacion.servicios ?? [] as s, i}
+            {#each reserva.servicios ?? [] as s, i}
               <tr class="{i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100 transition duration-150">
                 <td class="border text-center px-2 py-1">{s.proveedor}</td>
                 <td class="border text-center px-2 py-1">{s.servicioProducto}</td>
@@ -394,22 +393,22 @@
 
       <!-- Total -->
       <div class="text-right text-2xl font-bold text-gray-900 mb-10 no-break">
-        Total: ${cotizacion.totalGeneral.toLocaleString('es-CL')}
+        Total: ${reserva.totalGeneral.toLocaleString('es-CL')}
       </div>
 <hr class="my-4" />
       <!-- Observaciones -->
       <div class="bg-gray-50 border-l-4 border-indigo-400 p-6 text-sm rounded-lg mb-8 no-break">
         <p class="font-semibold text-gray-700">Nota:</p>
-        <p class="text-gray-600">Esta cotización es referencial y puede cambiar sin previo aviso.</p>
+        <p class="text-gray-600">Esta Reservación es referencial y puede cambiar sin previo aviso.</p>
         <p class="text-gray-600">Tarifas sujetas a disponibilidad al momento de confirmar la reserva.</p>
       </div>
 
       <!-- Historial -->
-      {#if cotizacion.eventos?.length}
+      {#if reserva.eventos?.length}
         <div class="bg-white border border-gray-200 rounded-lg p-6 text-sm no-break">
           <h4 class="font-semibold text-gray-900 mb-3">Historial de acciones</h4>
           <ul class="space-y-2 text-gray-700">
-            {#each cotizacion.eventos.sort((a, b) => a.fecha?.seconds - b.fecha?.seconds).filter((e, i, arr) => 
+            {#each reserva.eventos.sort((a, b) => a.fecha?.seconds - b.fecha?.seconds).filter((e, i, arr) => 
               arr.findIndex(x => x.fecha?.seconds === e.fecha?.seconds && x.comentario === e.comentario) === i
             ) as e}
               <li class="flex items-start">

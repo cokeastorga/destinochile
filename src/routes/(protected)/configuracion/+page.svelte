@@ -109,8 +109,10 @@
 {#if cargando}
   <div class="text-center mt-10 text-gray-500">Cargando configuración...</div>
 {:else}
+<hr class="my-1" />
   <div class="max-w-5xl mx-auto p-6">
-    <h1 class="text-2xl font-bold mb-6">Configuración Global</h1>
+    <h1 class="text-4xl font-bold mb-8">Configuración Global</h1>
+
 
     {#if error}
       <div class="text-red-600 bg-red-100 p-2 mb-4 rounded text-sm">{error}</div>
@@ -121,7 +123,7 @@
     {/if}
 
     <div class="mb-6">
-<h2 class="block mb-2 font-semibold">Tipos de Servicio y Markup Global</h2>
+<h2 class="block mb-8 font-semibold">Tipos de Servicio y Markup Global</h2>
       <table class="w-full text-sm mb-4">
         <thead>
           <tr class="bg-gray-100">

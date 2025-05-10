@@ -82,7 +82,7 @@
 
 <div class="min-h-screen bg-gray-100 p-6">
   <div class="max-w-5xl mx-auto bg-white p-6 rounded shadow">
-    <h1 class="text-2xl font-bold mb-4">Clientes</h1>
+    <h1 class="text-4xl font-bold mb-6">Clientes</h1>
 
     {#if error}
       <div class="bg-red-100 text-red-700 p-2 rounded mb-4">{error}</div>
