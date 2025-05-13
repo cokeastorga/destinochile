@@ -9,7 +9,7 @@
     import { differenceInDays } from 'date-fns';
     import { getAuth } from 'firebase/auth';
     import DetallePasajeros from '$lib/components/DetallePasajeros.svelte';
-    import { toast } from 'svelte-french-toast';
+    import { toast } from '@zerodevx/svelte-toast';
 
     let mostrarAlertaSeguimiento = false;
     let reserva: any = null;
@@ -49,10 +49,21 @@
                 pdfBlob: pdf
             });
             mensaje = 'Correo enviado con éxito';
-            toast.success(mensaje);
+            toast.push(mensaje, {
+	theme: {
+		'--toastBackground': '#4ade80', // verde
+		'--toastBarBackground': '#15803d'
+	}
+});
         } catch (error) {
             mensaje = `Error al enviar el correo: ${(error as Error).message}`;
-            toast.error(mensaje);
+            toast.push(mensaje, {
+	theme: {
+		'--toastBackground': '#fca5a5', // rojo claro
+		'--toastBarBackground': '#b91c1c'
+	}
+});
+
         } finally {
             enviandoCorreo = false;
         }
@@ -81,11 +92,21 @@
                 seguimientoRealizado: true
             });
             mensaje = 'Seguimiento marcado como realizado.';
-            toast.success(mensaje);
+           toast.push(mensaje, {
+	theme: {
+		'--toastBackground': '#4ade80', // verde
+		'--toastBarBackground': '#15803d'
+	}
+});
             mostrarAlertaSeguimiento = false;
         } catch (error) {
             mensaje = 'Error al actualizar el seguimiento.';
-            toast.error(mensaje);
+            toast.push(mensaje, {
+	theme: {
+		'--toastBackground': '#fca5a5', // rojo claro
+		'--toastBarBackground': '#b91c1c'
+	}
+});
         }
     }
 

@@ -45,6 +45,7 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
+		"@zerodevx/svelte-toast": "^0.9.6",
 		"date-fns": "^4.1.0",
 		"dotenv": "^16.5.0",
 		"firebase": "^11.6.0",
@@ -55,6 +56,7 @@
 		"nodemailer": "^7.0.3",
 		"resend": "^4.5.1",
 		"svelte-hero-icons": "^5.2.0",
+		"svelte-toast": "^1.0.0",
 		"xlsx": "^0.18.5"
 	}
 }
