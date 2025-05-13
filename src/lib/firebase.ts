@@ -15,10 +15,10 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-
 export const functions = getFunctions(app, 'us-central1');
 
-if (location.hostname === 'localhost') {
+// ✅ Solo conectar el emulador en el navegador
+if (typeof window !== 'undefined' && location.hostname === 'localhost') {
   connectFunctionsEmulator(functions, 'localhost', 5001);
 }
 

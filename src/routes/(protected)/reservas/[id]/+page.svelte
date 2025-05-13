@@ -302,7 +302,7 @@ $: pasajeros = reserva?.pasajeros ?? [];
           <img src="/logo.jpg" alt="Destino Chile" class="h-16 w-auto object-contain" />
           <div>
             <p class="text-sm text-gray-500">Reservación</p>
-            <h1 class="text-3xl font-bold text-gray-900">CT-DCH{reserva.id.slice(-4)}</h1>
+            <h1 class="text-3xl font-bold text-gray-900">FF-DCH{reserva.id.slice(-4)}</h1>
           </div>
         </div>
         <div class="text-right">
@@ -348,7 +348,7 @@ $: pasajeros = reserva?.pasajeros ?? [];
       </section>
       
       <hr class="my-4" />
-      <hr class="my-4" />
+     
       <!-- Servicios -->
       <h3 class="text-xl font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-3 no-break">Servicios seleccionados</h3>
       <div class="overflow-x-auto mb-8">
