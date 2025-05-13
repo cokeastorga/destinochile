@@ -7,6 +7,9 @@
 	import SearchFilter from '$lib/components/SearchFilters.svelte';
 	import ClientSelector from '$lib/components/ClientSelector.svelte';
 	import { setDoc, serverTimestamp } from 'firebase/firestore';
+	import ListaPasajeros from '$lib/components/ListaPasajeros.svelte';
+	
+
 
 
 
@@ -25,6 +28,8 @@
 	let categoriaHotel = '';
 	let tourPrivado = ''; // "PRIVADO" o "REGULAR"
 	let duracionTour = ''; // "HALF DAY" o "FULL DAY"
+	let pasajeros: any[] = []; // o estructura según tu componente
+
 
 	let cargando = false;
 
@@ -138,6 +143,9 @@
 	return `FF-DCH${numero}`;
 }
 
+function actualizarPasajeros(nuevosPasajeros: any[]) {
+	pasajeros = [...nuevosPasajeros];
+}
 
 
 async function guardarReserva() {
@@ -208,7 +216,8 @@ const totalGeneral = serviciosConSubtotales.reduce((acc, s) => acc + (s.subtotal
 		creadoPor: email || 'usuario-desconocido',
 		totalGeneral,
 		estado: 'Pendiente',
-		servicios: serviciosConSubtotales
+		servicios: serviciosConSubtotales,
+		pasajeros: pasajeros ?? []
 	};
 
 	try {
@@ -583,6 +592,10 @@ function groupByProveedor(servicios: any[]) {
 	</p>
 </div>
 {/if}
+<hr class="my-6" />
+<h2 class="mb-4 text-xl font-semibold">Información de Pasajeros</h2>
+<ListaPasajeros {pasajeros} onChange={actualizarPasajeros} />
+
 
 </div>
 

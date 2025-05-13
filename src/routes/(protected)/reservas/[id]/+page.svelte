@@ -9,6 +9,8 @@
     import { generarPDFDesdeHtml, descargarPDFDesdeHtml } from '$lib/utils/generarPDF';
     import { differenceInDays } from 'date-fns';
     import { getAuth } from 'firebase/auth';
+    import DetallePasajeros from '$lib/components/DetallePasajeros.svelte';
+
 
     let mostrarAlertaSeguimiento = false;
     let reserva: any = null;
@@ -88,6 +90,7 @@
         });
         return () => unsubscribe();
     });
+$: pasajeros = reserva?.pasajeros ?? [];
 
     $: if (
         reserva?.enviadaEl &&
@@ -390,6 +393,11 @@
           </tbody>
         </table>
       </div>
+      {#if pasajeros.length > 0}
+	<hr class="my-6" />
+	<DetallePasajeros {pasajeros} />
+{/if}
+
 
       <!-- Total -->
       <div class="text-right text-2xl font-bold text-gray-900 mb-10 no-break">

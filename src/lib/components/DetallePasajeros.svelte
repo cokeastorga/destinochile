@@ -1,5 +1,6 @@
 <script lang="ts">
 	export let pasajeros: any[] = [];
+
 	function calcularEdad(fechaNacimiento: string): string {
 		if (!fechaNacimiento) return '—';
 		const hoy = new Date();
@@ -18,6 +19,7 @@
 {#if pasajeros.length > 0}
 	<div class="space-y-6">
 		<h2 class="text-xl font-semibold mb-4">Lista de Pasajeros</h2>
+		
 		{#each pasajeros as p, i}
 			<div class="p-4 border rounded-lg bg-white shadow-sm space-y-1">
 				<p><strong>Pasajero #{i + 1}</strong></p>
