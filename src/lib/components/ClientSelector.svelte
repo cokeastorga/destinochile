@@ -12,19 +12,65 @@
   }
 </script>
 
-<h1 class="mb-6 text-2xl font-bold">Datos Cliente</h1>
-<div class="mb-4 grid grid-cols-1 gap-4 text-sm sm:grid-cols-2 lg:grid-cols-5">
-  <select bind:value={clienteSeleccionado} on:change={(e) => seleccionarCliente(e.target.value)} class="w-full rounded border px-2 py-1">
-    <option value="">Seleccione cliente</option>
-    {#each clientes as c}
-      <option value={c.id}>{c.nombre}</option>
-    {/each}
-  </select>
-  <input type="text" placeholder="Ejecutivo" bind:value={ejecutivo} class="w-full rounded border px-2 py-1" disabled />
-  <input type="email" placeholder="Correo electrónico" bind:value={email} class="w-full rounded border px-2 py-1" disabled />
-  <input type="text" placeholder="Referencia pasajero" bind:value={referenciaPasajero} class="w-full rounded border px-2 py-1" />
-  <select bind:value={tipoCliente} class="w-full rounded border px-2 py-1">
-    <option>Extranjero</option>
-    <option>Nacional</option>
-  </select>
+<div class="bg-white p-6 rounded-lg shadow-md">
+  <h1 class="mb-6 text-xl font-semibold text-gray-800">Datos del Cliente</h1>
+  <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+    <div>
+      <label for="clienteSeleccionado" class="block text-gray-700 text-sm font-bold mb-2">Cliente</label>
+      <select
+        id="clienteSeleccionado"
+        bind:value={clienteSeleccionado}
+        on:change={(e) => seleccionarCliente(e.target.value)}
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      >
+        <option value="">Seleccione un cliente</option>
+        {#each clientes as c}
+          <option value={c.id}>{c.nombre}</option>
+        {/each}
+      </select>
+    </div>
+    <div>
+      <label for="ejecutivo" class="block text-gray-700 text-sm font-bold mb-2">Ejecutivo</label>
+      <input
+        type="text"
+        id="ejecutivo"
+        placeholder="No asignado"
+        bind:value={ejecutivo}
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100 cursor-not-allowed"
+        disabled
+      />
+    </div>
+    <div>
+      <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Correo Electrónico</label>
+      <input
+        type="email"
+        id="email"
+        placeholder="Sin correo"
+        bind:value={email}
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100 cursor-not-allowed"
+        disabled
+      />
+    </div>
+    <div>
+      <label for="referenciaPasajero" class="block text-gray-700 text-sm font-bold mb-2">Referencia Pasajero</label>
+      <input
+        type="text"
+        id="referenciaPasajero"
+        placeholder="Ingrese referencia (opcional)"
+        bind:value={referenciaPasajero}
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      />
+    </div>
+    <div>
+      <label for="tipoCliente" class="block text-gray-700 text-sm font-bold mb-2">Tipo de Cliente</label>
+      <select
+        id="tipoCliente"
+        bind:value={tipoCliente}
+        class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+      >
+        <option>Extranjero</option>
+        <option>Nacional</option>
+      </select>
+    </div>
+  </div>
 </div>

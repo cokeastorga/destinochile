@@ -55,7 +55,7 @@
   <aside class="w-64 bg-gradient-to-b from-blue-700 to-indigo-800 text-white flex flex-col p-6 shadow-lg">
     <!-- Logo -->
      <div class="flex justify-center mb-4">
-      <img src="/logo.jpg" alt="Logo Destino Chile" class="w-40 h-40 rounded-full shadow-md border-4 border-white" />
+      <img src="/logo.jpg" alt="Logo Destino Chile" class="w-36 h-36 rounded-full shadow-md border-4 border-white" />
     </div>
     
     <!-- Título -->

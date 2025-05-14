@@ -76,11 +76,23 @@
             if (snap.exists()) {
                 reserva = { id, ...snap.data() };
             } else {
-                toast.error('Reservación no encontrada');
+               toast.push('Reservación no encontrada', {
+	theme: {
+		'--toastBackground': '#fca5a5', // rojo claro
+		'--toastBarBackground': '#b91c1c'
+	}
+});
+
                 goto('/dashboard');
             }
         } catch (error) {
-            toast.error('Error al cargar la reservación');
+            toast.push('Error al cargar la reservación', {
+	theme: {
+		'--toastBackground': '#fca5a5',
+		'--toastBarBackground': '#b91c1c'
+	}
+});
+
         } finally {
             cargando = false;
         }

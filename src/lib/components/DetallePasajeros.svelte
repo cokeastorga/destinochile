@@ -38,7 +38,6 @@
 <div class="container mx-auto p-6">
   {#if pasajeros.length > 0}
     <div class="space-y-6" transition:fade={{ duration: 300 }}>
-      <h2 class="text-2xl font-bold text-gray-800 mb-6">Lista de Pasajeros</h2>
 
       {#each pasajeros as p, i}
         <div
