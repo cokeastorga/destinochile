@@ -4,6 +4,8 @@
   import { collection, getDocs, deleteDoc, updateDoc, doc } from 'firebase/firestore';
   import { goto } from '$app/navigation';
   import { Icon } from 'svelte-hero-icons'; // Optional: Add an icon library like Heroicons
+  import ConfirmarReserva from '$lib/components/ConfirmarReserva.svelte';
+
 
   let reservasOriginal: any[] = [];
   let reservas: any[] = [];
@@ -94,6 +96,8 @@
       alert(`No se pudo eliminar la ${type.slice(0, -1)}. Intenta nuevamente.`);
     }
   }
+
+  
 
   function resetFiltros() {
     filtroEstado = '';
@@ -229,6 +233,9 @@
                   >
                     Eliminar
                   </button>
+{#if c.estado !== 'Confirmada'}
+  <ConfirmarReserva cotizacionId={c.id} on:reservaConfirmada={() => aplicarFiltros()} />
+{/if}
                 </td>
               </tr>
             {/each}

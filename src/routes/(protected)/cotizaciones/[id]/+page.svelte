@@ -10,6 +10,7 @@
     import { enviarCotizacionPorCorreo } from '$lib/api/enviarCorreoCliente';
     import { differenceInDays } from 'date-fns';
     import { getAuth } from 'firebase/auth';
+    import CotizacionAcciones from '$lib/components/CotizacionAcciones.svelte';
 
     let mostrarAlertaSeguimiento = false;
     let cotizacion: any = null;
@@ -209,6 +210,8 @@
   </div>
 {:else}
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+
     <!-- Botones de Acción -->
     <div class="flex flex-wrap gap-4 mb-8">
       <button
@@ -265,6 +268,15 @@
         </svg>
         Descargar PDF
       </button>
+   {#if cotizacion}
+    <CotizacionAcciones
+      cotizacionId={cotizacion.id}
+      estado={cotizacion.estado}
+    />
+    {/if}
+
+
+
     </div>
 
     <!-- Mensaje -->
@@ -308,7 +320,7 @@
           <p class="text-md font-medium text-gray-900">{new Date().toLocaleDateString('es-CL')}</p>
         </div>
       </div>
-<hr class="my-4" />
+      <hr class="my-4" />
       <!-- Datos del cliente -->
       <section class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 ml-4 text-sm">
         <div>
@@ -396,7 +408,7 @@
       <div class="text-right text-2xl font-bold text-gray-900 mb-10 no-break">
         Total: ${cotizacion.totalGeneral.toLocaleString('es-CL')}
       </div>
-<hr class="my-4" />
+      <hr class="my-4" />
       <!-- Observaciones -->
       <div class="bg-gray-50 border-l-4 border-indigo-400 p-6 text-sm rounded-lg mb-8 no-break">
         <p class="font-semibold text-gray-700">Nota:</p>
