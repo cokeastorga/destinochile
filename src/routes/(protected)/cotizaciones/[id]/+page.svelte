@@ -351,6 +351,10 @@
           <span class="font-semibold text-center text-gray-600">Cantidad de Pasajeros:</span>
           <p class="text-gray-900">{cotizacion.cantidadPasajeros}</p>
         </div>
+         <div>
+          <span class="font-semibold text-center text-gray-600">Cantidad de Pasajeros:</span>
+          <p class="text-gray-900">{cotizacion.referenciaPasajero}</p>
+        </div>
         <div>
           <span class="font-semibold text-center text-gray-600">Estado:</span>
           <span class="inline-block px-3 py-1 text-sm font-medium text-amber-800 bg-amber-100 rounded-full">{cotizacion.estado}</span>
