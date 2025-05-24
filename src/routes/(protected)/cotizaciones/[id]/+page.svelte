@@ -51,7 +51,8 @@
             });
             mensaje = 'Correo enviado con éxito';
         } catch (error) {
-            mensaje = `Error al enviar el correo: ${error.message}`;
+    console.error('❌ Error completo al enviar:', error);
+    mensaje = `Error al enviar el correo: ${error?.message || error}`;
         } finally {
             enviandoCorreo = false;
         }
