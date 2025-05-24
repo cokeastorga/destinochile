@@ -15,6 +15,14 @@
     }[];
   };
 
+  function agregarFilaVacia() {
+    configuracion.tiposServicio = [
+      ...configuracion.tiposServicio,
+      { categoria: '', servicio: '', markup: 0 }
+    ];
+  }
+
+
   let configuracion: Configuracion = {
     tiposServicio: [
       { categoria: 'Alojamiento', servicio: 'Hotel', markup: 15 },
@@ -56,10 +64,10 @@
   let esSuperAdmin = false;
 
   function obtenerMarkupDesdeConfiguracion(tipoServicio: string, servicioProducto: string): number {
-	const configuracion = obtenerConfiguracionGlobal(); // tu store o fetch
-	const clave = `${tipoServicio.toUpperCase()}|${servicioProducto.toUpperCase()}`;
-	return configuracion.markups[clave] ?? 1;
-}
+    const configuracion = obtenerConfiguracionGlobal(); // tu store o fetch
+    const clave = `${tipoServicio.toUpperCase()}|${servicioProducto.toUpperCase()}`;
+    return configuracion.markups[clave] ?? 1;
+  }
 
 
 
@@ -107,76 +115,86 @@
 </svelte:head>
 
 {#if cargando}
-  <div class="text-center mt-10 text-gray-500">Cargando configuración...</div>
+<div class="text-center mt-10 text-gray-500">Cargando configuración...</div>
 {:else}
 <hr class="my-1" />
-  <div class="max-w-5xl mx-auto p-6">
-    <h1 class="text-4xl font-bold mb-8">Configuración Global</h1>
+<div class="max-w-5xl mx-auto p-6">
+  <h1 class="text-4xl font-bold mb-8">Configuración Global</h1>
 
 
-    {#if error}
-      <div class="text-red-600 bg-red-100 p-2 mb-4 rounded text-sm">{error}</div>
+  {#if error}
+  <div class="text-red-600 bg-red-100 p-2 mb-4 rounded text-sm">{error}</div>
+  {/if}
+
+  {#if guardado}
+  <div class="text-green-600 bg-green-100 p-2 mb-4 rounded text-sm">Configuración guardada correctamente.</div>
+  {/if}
+
+  <div class="mb-6">
+    <h2 class="block mb-8 font-semibold">Tipos de Servicio y Markup Global</h2>
+{#if esSuperAdmin}
+<div class="flex justify-end mb-4">
+  <button on:click={agregarFilaVacia} class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    + Agregar nuevo tipo de servicio
+  </button>
+</div>
+{/if}
+
+
+    <table class="w-full text-sm mb-4">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="px-4 py-2 text-left">Categoría</th>
+          <th class="px-4 py-2 text-left">Servicio</th>
+          <th class="px-4 py-2 text-left">Markup (%)</th>
+          {#if esSuperAdmin}<th class="px-4 py-2 text-left">Acciones</th>{/if}
+        </tr>
+      </thead>
+      <tbody>
+        {#each configuracion.tiposServicio as tipo, i}
+        <tr class="border-t">
+          <td class="px-4 py-2">
+            {#if esSuperAdmin}
+            <input type="text" class="w-full border rounded px-2 py-1" bind:value={tipo.categoria} on:change={(e)=>
+            actualizarCampo(i, 'categoria', e.target.value)} />
+            {:else}
+            {tipo.categoria}
+            {/if}
+          </td>
+          <td class="px-4 py-2">
+            {#if esSuperAdmin}
+            <input type="text" class="w-full border rounded px-2 py-1" bind:value={tipo.servicio} on:change={(e)=>
+            actualizarCampo(i, 'servicio', e.target.value)} />
+            {:else}
+            {tipo.servicio}
+            {/if}
+          </td>
+          <td class="px-4 py-2">
+            {#if esSuperAdmin}
+            <input type="number" class="w-24 border rounded px-2 py-1" bind:value={tipo.markup} on:change={(e)=>
+            actualizarCampo(i, 'markup', e.target.value)} />
+            {:else}
+            {tipo.markup}
+            {/if}
+          </td>
+          {#if esSuperAdmin}
+          <td class="px-4 py-2">
+            <button on:click={()=> eliminarTipo(i)} class="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1
+              rounded">Eliminar</button>
+          </td>
+          {/if}
+        </tr>
+        {/each}
+      </tbody>
+    </table>
+
+    {#if esSuperAdmin}
+    <button on:click={guardarConfiguracion} class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+      Guardar configuración
+    </button>
     {/if}
-
-    {#if guardado}
-      <div class="text-green-600 bg-green-100 p-2 mb-4 rounded text-sm">Configuración guardada correctamente.</div>
-    {/if}
-
-    <div class="mb-6">
-<h2 class="block mb-8 font-semibold">Tipos de Servicio y Markup Global</h2>
-      <table class="w-full text-sm mb-4">
-        <thead>
-          <tr class="bg-gray-100">
-            <th class="px-4 py-2 text-left">Categoría</th>
-            <th class="px-4 py-2 text-left">Servicio</th>
-            <th class="px-4 py-2 text-left">Markup (%)</th>
-            {#if esSuperAdmin}<th class="px-4 py-2 text-left">Acciones</th>{/if}
-          </tr>
-        </thead>
-        <tbody>
-          {#each configuracion.tiposServicio as tipo, i}
-            <tr class="border-t">
-              <td class="px-4 py-2">
-                {#if esSuperAdmin}
-                  <input type="text" class="w-full border rounded px-2 py-1" bind:value={tipo.categoria} on:change={(e) => actualizarCampo(i, 'categoria', e.target.value)} />
-                {:else}
-                  {tipo.categoria}
-                {/if}
-              </td>
-              <td class="px-4 py-2">
-                {#if esSuperAdmin}
-                  <input type="text" class="w-full border rounded px-2 py-1" bind:value={tipo.servicio} on:change={(e) => actualizarCampo(i, 'servicio', e.target.value)} />
-                {:else}
-                  {tipo.servicio}
-                {/if}
-              </td>
-              <td class="px-4 py-2">
-                {#if esSuperAdmin}
-                  <input type="number" class="w-24 border rounded px-2 py-1" bind:value={tipo.markup} on:change={(e) => actualizarCampo(i, 'markup', e.target.value)} />
-                {:else}
-                  {tipo.markup}
-                {/if}
-              </td>
-              {#if esSuperAdmin}
-                <td class="px-4 py-2">
-                  <button on:click={() => eliminarTipo(i)} class="bg-red-500 hover:bg-red-600 text-white text-xs px-3 py-1 rounded">Eliminar</button>
-                </td>
-              {/if}
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-
-      {#if esSuperAdmin}
-        <button
-          on:click={guardarConfiguracion}
-          class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
-        >
-          Guardar configuración
-        </button>
-      {/if}
-    </div>
   </div>
+</div>
 {/if}
 
 <style>
