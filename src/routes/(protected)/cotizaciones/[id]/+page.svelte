@@ -331,11 +331,24 @@
           <span class="font-semibold text-center text-gray-600">Ejecutivo Responsable:</span>
           <p class="text-gray-900">{cotizacion.ejecutivo}</p>
         </div>
+         <div>
+          <span class="font-semibold text-center text-gray-600">Referencia:</span>
+          <p class="text-gray-900">{cotizacion.referenciaPasajero}</p>
+        </div>
         <div>
           <span class="font-semibold text-center text-gray-600">Tipo Cliente:</span>
           <p class="text-gray-900">{cotizacion.tipoCliente}</p>
         </div>
         <div>
+          <span class="font-semibold text-center text-gray-600">Cantidad de Pasajeros:</span>
+          <p class="text-gray-900">{cotizacion.cantidadPasajeros}</p>
+        </div>
+         <div>
+          <span class="font-semibold text-center text-gray-600">Estado:</span>
+          <span class="inline-block px-3 py-1 text-sm font-medium text-amber-800 bg-amber-100 rounded-full">{cotizacion.estado}</span>
+        </div>
+        
+         <div>
           <span class="font-semibold text-center text-gray-600">Ciudad de Destino:</span>
           <p class="text-gray-900">{cotizacion.destino}</p>
         </div>
@@ -347,18 +360,9 @@
           <span class="font-semibold text-center text-gray-600">Check-out:</span>
           <p class="text-gray-900">{formatear(cotizacion.fechaFin)}</p>
         </div>
-        <div>
-          <span class="font-semibold text-center text-gray-600">Cantidad de Pasajeros:</span>
-          <p class="text-gray-900">{cotizacion.cantidadPasajeros}</p>
-        </div>
-         <div>
-          <span class="font-semibold text-center text-gray-600">Cantidad de Pasajeros:</span>
-          <p class="text-gray-900">{cotizacion.referenciaPasajero}</p>
-        </div>
-        <div>
-          <span class="font-semibold text-center text-gray-600">Estado:</span>
-          <span class="inline-block px-3 py-1 text-sm font-medium text-amber-800 bg-amber-100 rounded-full">{cotizacion.estado}</span>
-        </div>
+       
+        
+       
       </section>
       
       <hr class="my-4" />
@@ -371,8 +375,8 @@
             <tr>
               <th class="px-2 py-1 text-center font-semibold">Proveedor</th>
               <th class="px-2 py-1 text-center font-semibold">Servicio</th>
+
               <th class="px-2 py-1 text-center font-semibold">Producto</th>
-              <th class="px-2 py-1 text-center font-semibold">Temp</th>
               <th class="px-2 py-1 text-center font-semibold">Habitación</th>
               <th class="px-2 py-1 text-center font-semibold">Nombre</th>
               <th class="px-2 py-1 text-center font-semibold">Descripción</th>
@@ -380,6 +384,7 @@
               <th class="px-2 py-1 text-center font-semibold">Tipo Tour</th> -->
               <th class="px-2 py-1 text-center font-semibold">Cant/ Noches</th>
               <th class="px-2 py-1 text-center font-semibold">Cant/ Habs</th>
+              <th class="px-2 py-1 text-center font-semibold">Temp</th>
               <th class="px-6 py-1 text-center font-semibold">Check-in</th>
               <th class="px-6 py-1 text-center font-semibold">Check-out</th>
               <th class="px-2 py-1 text-center font-semibold">Subtotal</th>
@@ -390,7 +395,6 @@
               <tr class="{i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100 transition duration-150">
                 <td class="border text-center px-2 py-1">{s.proveedor}</td>
                 <td class="border text-center px-2 py-1">{s.servicioProducto}</td>
-                <td class="border text-center px-2 py-1">{s.temporada}</td>
                 <td class="border text-center px-2 py-1">{s.tipoServicio}</td>
                 <td class="border text-center px-2 py-1">{s.tipoHabitacion}</td>
                 <td class="border text-center px-2 py-1">{s.nombreProducto}</td>
@@ -399,6 +403,7 @@
                 <td class="border text-center px-2 py-1">{s.tourPrivado}</td>-->
                 <td class="border text-center px-2 py-1">{s.noches}</td>
                 <td class="border text-center px-2 py-1">{s.habitaciones}</td>
+                <td class="border text-center px-2 py-1">{s.temporada}</td>
                 <td class="border text-center px-2 py-1">{s.checkin}</td>
                 <td class="border text-center px-2 py-1">{s.checkout}</td>
                 <td class="border text-center px-2 py-1 text-right">${(s.subtotal || 0).toLocaleString('es-CL')}</td>
