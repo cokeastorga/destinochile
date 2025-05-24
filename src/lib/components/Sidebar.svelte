@@ -38,16 +38,21 @@
     });
   });
 
-  const menuItems = [
-    { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { label: 'Cotización', href: '/cotizaciones', icon: FileText },
-    { label: 'Reservas', href: '/reservas', icon: CalendarCheck },
-    { label: 'Clientes', href: '/clientes', icon: Users },
-    { label: 'Proveedores', href: '/proveedores', icon: Briefcase },
-    //{ label: 'Ventas', href: '/ventas', icon: FileText },
-    { label: 'Usuarios y Roles', href: '/usuarios', icon: ShieldCheck },
-    { label: 'Configuración', href: '/configuracion', icon: Settings }
-  ];
+  $: menuItems = [
+  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+  { label: 'Cotización', href: '/cotizaciones', icon: FileText },
+  { label: 'Reservas', href: '/reservas', icon: CalendarCheck },
+  { label: 'Clientes', href: '/clientes', icon: Users },
+  { label: 'Proveedores', href: '/proveedores', icon: Briefcase },
+  ...(rol === 'SuperAdministrador' || rol === 'Administrador'
+    ? [{ label: 'Usuarios y Roles', href: '/usuarios', icon: ShieldCheck }]
+    : []),
+  ...(rol === 'SuperAdministrador'
+    ? [{ label: 'Configuración', href: '/configuracion', icon: Settings }]
+    : [])
+];
+
+
 </script>
 
 <div class="flex min-h-screen">
