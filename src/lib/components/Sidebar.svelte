@@ -44,7 +44,7 @@
     { label: 'Reservas', href: '/reservas', icon: CalendarCheck },
     { label: 'Clientes', href: '/clientes', icon: Users },
     { label: 'Proveedores', href: '/proveedores', icon: Briefcase },
-    { label: 'Ventas', href: '/ventas', icon: FileText },
+    //{ label: 'Ventas', href: '/ventas', icon: FileText },
     { label: 'Usuarios y Roles', href: '/usuarios', icon: ShieldCheck },
     { label: 'Configuración', href: '/configuracion', icon: Settings }
   ];
