@@ -276,9 +276,6 @@ function groupByProveedor(servicios: any[]) {
 		resultados = [];
 		cargando = true;
 		
-
-	
-
 		if (!destino || !tipoServicio || !servicio || !fechaInicio || !fechaFin) {
 			cargando = false;
 		

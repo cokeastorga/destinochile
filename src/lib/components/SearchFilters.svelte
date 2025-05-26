@@ -84,6 +84,7 @@
         {/if}
       </select>
     </div>
+    <!--
     <div>
       <label for="categoriaHotel" class="block text-gray-700 text-sm font-bold mb-2">Categoría Hotel</label>
       <select id="categoriaHotel" bind:value={categoriaHotel} class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
@@ -95,6 +96,9 @@
         <option value="5 ESTRELLAS">5 Estrellas</option>
       </select>
     </div>
+    
+    
+    
     <div>
       <label for="tourPrivado" class="block text-gray-700 text-sm font-bold mb-2">Tipo de Tour</label>
       <select id="tourPrivado" bind:value={tourPrivado} class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
@@ -103,6 +107,7 @@
         <option value="REGULAR">Regular</option>
       </select>
     </div>
+     
     <div>
       <label for="duracionTour" class="block text-gray-700 text-sm font-bold mb-2">Duración del Tour</label>
       <select id="duracionTour" bind:value={duracionTour} class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
@@ -111,6 +116,8 @@
         <option value="FULL DAY">Día completo</option>
       </select>
     </div>
+     
+    
     <div class="sm:col-span-2 md:col-span-3 lg:col-span-4">
       <label class="block text-gray-700 text-sm font-bold mb-2">Rango de Precio</label>
       <div class="flex items-center gap-4">
@@ -121,6 +128,7 @@
         <span class="text-gray-700">${filtroPrecioMax.toLocaleString()}</span>
       </div>
     </div>
+    -->
   </div>
 
   <div class="text-center">
