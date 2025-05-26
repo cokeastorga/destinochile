@@ -275,19 +275,13 @@ function groupByProveedor(servicios: any[]) {
 	async function buscarServicios() {
 		resultados = [];
 		cargando = true;
-		let timeoutId: NodeJS.Timeout | null = null;
-		const timeoutDuration = 15000;
+		
 
-		timeoutId = setTimeout(() => {
-			cargando = false;
-			timeoutId = null;
-			console.warn('La búsqueda de servicios ha excedido el tiempo límite.');
-			// Aquí podrías mostrar un mensaje al usuario indicando que no se encontraron resultados a tiempo.
-		}, timeoutDuration);
+	
 
 		if (!destino || !tipoServicio || !servicio || !fechaInicio || !fechaFin) {
 			cargando = false;
-			if (timeoutId) clearTimeout(timeoutId);
+		
 			return;
 		}
 
