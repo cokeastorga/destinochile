@@ -18,10 +18,10 @@ export const enviarCorreo = onCall(
       throw new functions.https.HttpsError('invalid-argument', 'Faltan campos obligatorios');
     }
 
-    const transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
   host: 'mail.destinochile.cl',
-  port: 465,
-  secure: true,
+  port: 587,
+  secure: false,
   auth: {
     user: functions.config().correo.usuario,
     pass: functions.config().correo.clave
@@ -51,7 +51,8 @@ export const enviarCorreo = onCall(
       await transporter.sendMail(mailOptions);
       return { success: true, message: 'Correo enviado correctamente' };
     } catch (error: any) {
-      console.error('❌ Error al enviar correo:', error);
+     console.error('❌ Error completo:', error, error?.response);
+
       throw new functions.https.HttpsError('internal', error.message);
     }
   }
