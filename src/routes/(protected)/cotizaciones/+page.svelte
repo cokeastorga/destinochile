@@ -49,191 +49,191 @@
 	let serviciosSeleccionados: any[] = [];
 
 	onMount(async () => {
-	// Fetch clients
-	const snapshotClientes = await getDocs(collection(db, 'clientes'));
-	clientes = snapshotClientes.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+		// Fetch clients
+		const snapshotClientes = await getDocs(collection(db, 'clientes'));
+		clientes = snapshotClientes.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-	// Obtener referencia al documento 'global' dentro de la colección 'configuracion'
-	const docRef = doc(db, 'configuracion', 'global');
-	const docSnap = await getDoc(docRef);
+		// Obtener referencia al documento 'global' dentro de la colección 'configuracion'
+		const docRef = doc(db, 'configuracion', 'global');
+		const docSnap = await getDoc(docRef);
 
-	if (docSnap.exists()) {
-		const data = docSnap.data();
-		configuraciones = data?.tiposServicio || [];
-		markups = data?.tiposServicio || [];
-		tipoCambioReceptivo = data?.cambioReceptivo || 950;
-		tipoCambioContable = data?.cambioContable || 960;
+		if (docSnap.exists()) {
+			const data = docSnap.data();
+			configuraciones = data?.tiposServicio || [];
+			markups = data?.tiposServicio || [];
+			tipoCambioReceptivo = data?.cambioReceptivo || 950;
+			tipoCambioContable = data?.cambioContable || 960;
 
-		tiposDeServicio = [...new Set(configuraciones.map((c) => c.categoria))].filter(Boolean);
-		serviciosPorTipo = configuraciones.reduce((acc, c) => {
-			if (!c.categoria || !c.servicio) return acc;
-			if (!acc[c.categoria]) acc[c.categoria] = [];
-			if (!acc[c.categoria].includes(c.servicio)) acc[c.categoria].push(c.servicio);
-			return acc;
-		}, {});
-	} else {
-		console.warn('No se encontró el documento "global" en la colección "configuracion".');
-	}
-
-	// 3. Si venimos desde ?edit=ID, precargar datos
-	const params = new URLSearchParams(window.location.search);
-	const editId = params.get('edit');
-
-	if (editId) {
-		editando = true;
-		idCotizacion = editId;
-
-		const ref = doc(db, 'cotizaciones', editId);
-		const snap = await getDoc(ref);
-
-		if (snap.exists()) {
-			const data = snap.data();
-
-			clienteSeleccionado = data.clienteId || '';
-			destino = data.destino || '';
-			fechaInicio = data.fechaInicio || '';
-			fechaFin = data.fechaFin || '';
-			tipoCliente = data.tipoCliente || 'Extranjero';
-			email = data.email || '';
-			ejecutivo = data.ejecutivo || '';
-			referenciaPasajero = data.referenciaPasajero || '';
-			cantidadPasajeros = data.cantidadPasajeros || 1;
-
-			if (Array.isArray(data.servicios)) {
-				serviciosSeleccionados = data.servicios.map((s) => {
-					const { tarifa } = calcularTarifaFinal(
-						s.tarifaNeta ?? s.tarifa_neta ?? 0,
-						s.markupManual ?? 0.8,
-						tipoCliente,
-						s.monedaOriginal ?? '',
-						tipoCambioReceptivo,
-						tipoCambioContable,
-						s.tipoServicio ?? '',
-						s.servicioProducto ?? ''
-					);
-					const noches = Number(s.noches ?? 1);
-					const habitaciones = Number(s.habitaciones ?? 1);
-					const subtotal = Math.round(tarifa * noches * habitaciones);
-
-					return {
-						...s,
-						noches,
-						habitaciones,
-						subtotal
-					};
-				});
-			}
+			tiposDeServicio = [...new Set(configuraciones.map((c) => c.categoria))].filter(Boolean);
+			serviciosPorTipo = configuraciones.reduce((acc, c) => {
+				if (!c.categoria || !c.servicio) return acc;
+				if (!acc[c.categoria]) acc[c.categoria] = [];
+				if (!acc[c.categoria].includes(c.servicio)) acc[c.categoria].push(c.servicio);
+				return acc;
+			}, {});
 		} else {
-			console.warn(`No se encontró la cotización con ID ${editId}`);
+			console.warn('No se encontró el documento "global" en la colección "configuracion".');
 		}
-	}
-});
+
+		// 3. Si venimos desde ?edit=ID, precargar datos
+		const params = new URLSearchParams(window.location.search);
+		const editId = params.get('edit');
+
+		if (editId) {
+			editando = true;
+			idCotizacion = editId;
+
+			const ref = doc(db, 'cotizaciones', editId);
+			const snap = await getDoc(ref);
+
+			if (snap.exists()) {
+				const data = snap.data();
+
+				clienteSeleccionado = data.clienteId || '';
+				destino = data.destino || '';
+				fechaInicio = data.fechaInicio || '';
+				fechaFin = data.fechaFin || '';
+				tipoCliente = data.tipoCliente || 'Extranjero';
+				email = data.email || '';
+				ejecutivo = data.ejecutivo || '';
+				referenciaPasajero = data.referenciaPasajero || '';
+				cantidadPasajeros = data.cantidadPasajeros || 1;
+
+				if (Array.isArray(data.servicios)) {
+					serviciosSeleccionados = data.servicios.map((s) => {
+						const { tarifa } = calcularTarifaFinal(
+							s.tarifaNeta ?? s.tarifa_neta ?? 0,
+							s.markupManual ?? 0.8,
+							tipoCliente,
+							s.monedaOriginal ?? '',
+							tipoCambioReceptivo,
+							tipoCambioContable,
+							s.tipoServicio ?? '',
+							s.servicioProducto ?? ''
+						);
+						const noches = Number(s.noches ?? 1);
+						const habitaciones = Number(s.habitaciones ?? 1);
+						const subtotal = Math.round(tarifa * noches * habitaciones);
+
+						return {
+							...s,
+							noches,
+							habitaciones,
+							subtotal
+						};
+					});
+				}
+			} else {
+				console.warn(`No se encontró la cotización con ID ${editId}`);
+			}
+		}
+	});
 
 
 
 	let proveedorAbierto: string | null = null;
 
 	function generarIdCotizacion(): string {
-	const numero = Math.floor(1000 + Math.random() * 9000); // 4 dígitos aleatorios
-	return `CT-DCH${numero}`;
-}
-
-
-
-async function guardarCotizacion() {
-	if (!clienteSeleccionado || !fechaInicio || !fechaFin) {
-		alert('Por favor selecciona cliente y fechas válidas.');
-		return;
+		const numero = Math.floor(1000 + Math.random() * 9000); // 4 dígitos aleatorios
+		return `CT-DCH${numero}`;
 	}
-	console.log('serviciosSeleccionados:', serviciosSeleccionados)
 
-	const serviciosConSubtotales = serviciosSeleccionados
-	
-	.filter((s) => s && (s.tarifaNeta !== undefined || s.tarifa_neta !== undefined))
-	.map((s) => {
-		const { tarifa } = calcularTarifaFinal(
-			s.tarifaNeta ?? s.tarifa_neta ?? 0,
-			s.markupManual,
-			tipoCliente,
-			s.monedaOriginal,
-			tipoCambioReceptivo,
-			tipoCambioContable,
-			s.tipoServicio,
-			s.servicioProducto
-		);
 
-		const subtotal = Math.round(tarifa * (s.noches || 1) * (s.habitaciones || 1));
 
-		return {
-			id: s.id ?? '',
-			proveedor: s.proveedor ?? '',
-			tipoServicio: s.tipoServicio ?? '',
-			servicioProducto: s.servicioProducto ?? '',
-			nombreProducto: s.nombreProducto ?? '',
-			tipoHabitacion: s.tipoHabitacion ?? '',
-			ocupacion: s.ocupacion ?? '',
-			categoria: s.categoria ?? '',
-			segmento: s.segmento ?? '',
-			tourPrivado: s.tourPrivado ?? '',
-			halfDay: s.halfDay ?? '',
-			temporada: s.temporada ?? '',
-			descripcion: s.descripcion ?? '',
-			tarifaNeta: s.tarifa_neta ?? 0,
-			monedaOriginal: s.monedaOriginal ?? '',
-			markupManual: s.markupManual ?? 0.8,
-			noches: s.noches ?? 1,
-			habitaciones: s.habitaciones ?? 1,
-			checkin: s.checkin ?? null,
-			checkout: s.checkout ?? null,
-			subtotal
+	async function guardarCotizacion() {
+		if (!clienteSeleccionado || !fechaInicio || !fechaFin) {
+			alert('Por favor selecciona cliente y fechas válidas.');
+			return;
+		}
+		console.log('serviciosSeleccionados:', serviciosSeleccionados)
+
+		const serviciosConSubtotales = serviciosSeleccionados
+
+			.filter((s) => s && (s.tarifaNeta !== undefined || s.tarifa_neta !== undefined))
+			.map((s) => {
+				const { tarifa } = calcularTarifaFinal(
+					s.tarifaNeta ?? s.tarifa_neta ?? 0,
+					s.markupManual,
+					tipoCliente,
+					s.monedaOriginal,
+					tipoCambioReceptivo,
+					tipoCambioContable,
+					s.tipoServicio,
+					s.servicioProducto
+				);
+
+				const subtotal = Math.round(tarifa * (s.noches || 1) * (s.habitaciones || 1));
+
+				return {
+					id: s.id ?? '',
+					proveedor: s.proveedor ?? '',
+					tipoServicio: s.tipoServicio ?? '',
+					servicioProducto: s.servicioProducto ?? '',
+					nombreProducto: s.nombreProducto ?? '',
+					tipoHabitacion: s.tipoHabitacion ?? '',
+					ocupacion: s.ocupacion ?? '',
+					categoria: s.categoria ?? '',
+					segmento: s.segmento ?? '',
+					tourPrivado: s.tourPrivado ?? '',
+					halfDay: s.halfDay ?? '',
+					temporada: s.temporada ?? '',
+					descripcion: s.descripcion ?? '',
+					tarifaNeta: s.tarifa_neta ?? 0,
+					monedaOriginal: s.monedaOriginal ?? '',
+					markupManual: s.markupManual ?? 0.8,
+					noches: s.noches ?? 1,
+					habitaciones: s.habitaciones ?? 1,
+					checkin: s.checkin ?? null,
+					checkout: s.checkout ?? null,
+					subtotal
+				};
+			});
+		const totalGeneral = serviciosConSubtotales.reduce((acc, s) => acc + (s.subtotal || 0), 0);
+
+		// ID final: nuevo o el existente si estamos editando
+		const idFinal = editando && idCotizacion ? idCotizacion : generarIdCotizacion();
+
+		const cotizacion = {
+			id: idFinal,
+			clienteId: clienteSeleccionado ?? '',
+			email: email ?? '',
+			ejecutivo: ejecutivo ?? '',
+			destino: destino ?? '',
+			referenciaPasajero: referenciaPasajero ?? '',
+			tipoCliente: tipoCliente ?? 'Extranjero',
+			fechaInicio: fechaInicio ?? '',
+			fechaFin: fechaFin ?? '',
+			cantidadPasajeros: cantidadPasajeros ?? 1,
+			creadoEn: serverTimestamp(),
+			creadoPor: email || 'usuario-desconocido',
+			totalGeneral,
+			estado: 'Pendiente',
+			servicios: serviciosConSubtotales
 		};
-	});
-const totalGeneral = serviciosConSubtotales.reduce((acc, s) => acc + (s.subtotal || 0), 0);
 
-	// ID final: nuevo o el existente si estamos editando
-	const idFinal = editando && idCotizacion ? idCotizacion : generarIdCotizacion();
-
-	const cotizacion = {
-		id: idFinal,
-		clienteId: clienteSeleccionado ?? '',
-		email: email ?? '',
-		ejecutivo: ejecutivo ?? '',
-		destino: destino ?? '',
-		referenciaPasajero: referenciaPasajero ?? '',
-		tipoCliente: tipoCliente ?? 'Extranjero',
-		fechaInicio: fechaInicio ?? '',
-		fechaFin: fechaFin ?? '',
-		cantidadPasajeros: cantidadPasajeros ?? 1,
-		creadoEn: serverTimestamp(),
-		creadoPor: email || 'usuario-desconocido',
-		totalGeneral,
-		estado: 'Pendiente',
-		servicios: serviciosConSubtotales
-	};
-
-	try {
-		const docRef = doc(db, 'cotizaciones', idFinal);
-		await setDoc(docRef, cotizacion);
-		alert(editando ? 'Cotización actualizada correctamente.' : `Cotización guardada con éxito. ID: ${idFinal}`);
-		serviciosSeleccionados = [];
-	} catch (error) {
-		console.error('Error al guardar la cotización:', error);
-		alert('Ocurrió un error al guardar la cotización.');
+		try {
+			const docRef = doc(db, 'cotizaciones', idFinal);
+			await setDoc(docRef, cotizacion);
+			alert(editando ? 'Cotización actualizada correctamente.' : `Cotización guardada con éxito. ID: ${idFinal}`);
+			serviciosSeleccionados = [];
+		} catch (error) {
+			console.error('Error al guardar la cotización:', error);
+			alert('Ocurrió un error al guardar la cotización.');
+		}
 	}
-}
 
 
-function toggleProveedor(nombre: string) {
-	proveedorAbierto = proveedorAbierto === nombre ? null : nombre;
-}
+	function toggleProveedor(nombre: string) {
+		proveedorAbierto = proveedorAbierto === nombre ? null : nombre;
+	}
 
-function groupByProveedor(servicios: any[]) {
-	return servicios.reduce((acc, servicio) => {
-		if (!acc[servicio.proveedor]) acc[servicio.proveedor] = [];
-		acc[servicio.proveedor].push(servicio);
-		return acc;
-	}, {} as Record<string, any[]>);
-}
+	function groupByProveedor(servicios: any[]) {
+		return servicios.reduce((acc, servicio) => {
+			if (!acc[servicio.proveedor]) acc[servicio.proveedor] = [];
+			acc[servicio.proveedor].push(servicio);
+			return acc;
+		}, {} as Record<string, any[]>);
+	}
 
 
 	function seleccionarCliente(id: string) {
@@ -266,9 +266,6 @@ function groupByProveedor(servicios: any[]) {
 	async function buscarServicios() {
 		resultados = [];
 		cargando = true;
-	
-
-		
 
 		if (!destino || !tipoServicio || !servicio || !fechaInicio || !fechaFin) {
 			cargando = false;
@@ -330,14 +327,22 @@ function groupByProveedor(servicios: any[]) {
 				if (tipoServicio.toUpperCase() === 'ALOJAMIENTO') {
 					if (capacidad < 1) continue;
 				} else if (tipoServicio.toUpperCase() === 'TRANSPORTE') {
-					const rangoValido =
+					let rangoValido = false;
+
+					if (
 						(cantidadPasajeros >= 1 && cantidadPasajeros <= 4 && capacidad >= 1 && capacidad <= 4) ||
 						(cantidadPasajeros >= 5 && cantidadPasajeros <= 7 && capacidad >= 5 && capacidad <= 7) ||
 						(cantidadPasajeros >= 8 && cantidadPasajeros <= 11 && capacidad >= 8 && capacidad <= 11) ||
 						(cantidadPasajeros >= 12 && cantidadPasajeros <= 19 && capacidad >= 12 && capacidad <= 19) ||
-						(cantidadPasajeros >= 20 && capacidad >= 20);
+						(cantidadPasajeros >= 20 && capacidad >= 20)
+					) {
+						rangoValido = true;
+					}
 
-					if (!rangoValido) continue;
+					const fallbackValido = capacidad >= cantidadPasajeros;
+
+					if (!rangoValido && !fallbackValido) continue;
+
 				} else {
 					if (capacidad !== cantidadPasajeros) continue;
 				}
@@ -355,10 +360,10 @@ function groupByProveedor(servicios: any[]) {
 				);
 
 				// Filtros extra
-				if (categoriaHotel && (data['CATEGORÍA HOTEL'] || '').toUpperCase() !== categoriaHotel.toUpperCase()) continue;
-				if (tarifaCalculada < filtroPrecioMin || tarifaCalculada > filtroPrecioMax) continue;
-				if (tourPrivado && (data['TOUR PRIVADO REGULAR'] || '').toUpperCase() !== tourPrivado.toUpperCase()) continue;
-				if (duracionTour && (data['HALF DAY FULL DAY'] || '').toUpperCase() !== duracionTour.toUpperCase()) continue;
+			//	if (categoriaHotel && (data['CATEGORÍA HOTEL'] || '').toUpperCase() !== categoriaHotel.toUpperCase()) continue;
+			//	if (tarifaCalculada < filtroPrecioMin || tarifaCalculada > filtroPrecioMax) continue;
+			//	if (tourPrivado && (data['TOUR PRIVADO REGULAR'] || '').toUpperCase() !== tourPrivado.toUpperCase()) continue;
+			//	if (duracionTour && (data['HALF DAY FULL DAY'] || '').toUpperCase() !== duracionTour.toUpperCase()) continue;
 
 				candidatosAjustados.push({
 					id: docu.id,
@@ -461,41 +466,31 @@ function groupByProveedor(servicios: any[]) {
 	<div class="mt-10">
 		<h2 class="mb-4 text-xl font-semibold">Servicios Seleccionados</h2>
 
-		
 
+
+		<hr class="my-4" />
+
+		{#if serviciosSeleccionados.length > 0}
+		<ServiciosSeleccionados {serviciosSeleccionados} {tipoCliente} {cantidadPasajeros} {tipoCambioReceptivo}
+			{tipoCambioContable} onActualizarMarkup={actualizarMarkup} />
+
+		<div class="mt-6 text-right">
+			<button on:click={guardarCotizacion} class="rounded bg-blue-600 px-5 py-2 text-white hover:bg-blue-700">
+				Guardar Cotización
+			</button>
+		</div>
+		{/if}
+	</div>
 	<hr class="my-4" />
 
-	{#if serviciosSeleccionados.length > 0}
-  <ServiciosSeleccionados
-    {serviciosSeleccionados}
-    {tipoCliente}
-    {cantidadPasajeros}
-    {tipoCambioReceptivo}
-    {tipoCambioContable}
-    onActualizarMarkup={actualizarMarkup}
-  />
-
-  <div class="mt-6 text-right">
-    <button
-      on:click={guardarCotizacion}
-      class="rounded bg-blue-600 px-5 py-2 text-white hover:bg-blue-700"
-    >
-      Guardar Cotización
-    </button>
-  </div>
-{/if}
-</div>
-<hr class="my-4" />
-
 	{#if resultados.length > 0}
-<h2 class="mb-4 mt-8 text-xl font-bold">Resultados de Servicios Disponibles</h2>
+	<h2 class="mb-4 mt-8 text-xl font-bold">Resultados de Servicios Disponibles</h2>
 
-{#each Object.entries(groupByProveedor(resultados)) as [proveedor, servicios]}
+	{#each Object.entries(groupByProveedor(resultados)) as [proveedor, servicios]}
 	<div class="mb-4 rounded border border-gray-300 bg-white shadow">
-		<button
-			class="w-full px-4 py-3 text-left font-semibold text-blue-600 hover:bg-gray-100"
-			on:click={() => toggleProveedor(proveedor)}
-		>
+		<button class="w-full px-4 py-3 text-left font-semibold text-blue-600 hover:bg-gray-100" on:click={()=>
+			toggleProveedor(proveedor)}
+			>
 			{proveedor}
 		</button>
 
@@ -510,12 +505,12 @@ function groupByProveedor(servicios: any[]) {
 					<th class="text-center px-2 py-1">Tipo de Habitación</th>
 					<th class="text-center px-2 py-1">Capacidad</th>
 					<th class="text-center px-2 py-1">Categoría</th>
-				<!--	<th class="text-center px-2 py-1">Segmento</th>
+					<!--	<th class="text-center px-2 py-1">Segmento</th>
 					<th class="text-center px-2 py-1">Privado/ Regular</th>
 					<th class="text-center px-2 py-1">Half/ Full Day</th> -->
 					<th class="text-center px-2 py-1">Descripción</th>
 					<th class="text-center px-2 py-1">Temporada</th>
-			<!--		<th class="text-center px-2 py-1">Moneda</th>
+					<!--		<th class="text-center px-2 py-1">Moneda</th>
 					<th class="text-center px-2 py-1">Tarifa Neta</th> -->
 					<th class="text-center px-2 py-1">Tarifa Final</th>
 					<th class="text-center px-2 py-1">Seleccionar</th>
@@ -531,36 +526,34 @@ function groupByProveedor(servicios: any[]) {
 					<td class="text-center px-2 py-1">{servicio.tipoHabitacion}</td>
 					<td class="text-center px-2 py-1">{servicio.ocupacion}</td>
 					<td class="text-center px-2 py-1">{servicio.categoria}</td>
-				<!--	<td class="text-center px-2 py-1">{servicio.segmento}</td> -->
-				<!--	<td class="text-center px-2 py-1">{servicio.tourPrivado}</td> 
+					<!--	<td class="text-center px-2 py-1">{servicio.segmento}</td> -->
+					<!--	<td class="text-center px-2 py-1">{servicio.tourPrivado}</td> 
 					<td class="text-center px-2 py-1">{servicio.halfDay}</td> -->
 					<td class="text-center px-2 py-1">{servicio.descripcion}</td>
 					<td class="text-center px-2 py-1">{servicio.temporada}</td>
-				<!--	<td class="text-center px-2 py-1">{servicio.monedaOriginal}</td>-->
-			<!--		<td class="text-center px-2 py-1">{servicio.tarifa_neta} {servicio.monedaOriginal}</td> -->
+					<!--	<td class="text-center px-2 py-1">{servicio.monedaOriginal}</td>-->
+					<!--		<td class="text-center px-2 py-1">{servicio.tarifa_neta} {servicio.monedaOriginal}</td> -->
 					<td class="text-center px-4 py-2">
 						{#key servicio.id}
 						{(() => {
-							const { tarifa, monedaFinal } = calcularTarifaFinal(
-								servicio.tarifa_neta,
-								servicio.markupManual,
-								tipoCliente,
-								servicio.monedaOriginal,
-								tipoCambioReceptivo,
-								tipoCambioContable,
-								servicio.tipoServicio,
-								servicio.servicioProducto
-							);
-							return `${monedaFinal === 'DÓLAR' ? 'U$' : '$'}${Math.round(tarifa).toLocaleString('es-CL')}`;
+						const { tarifa, monedaFinal } = calcularTarifaFinal(
+						servicio.tarifa_neta,
+						servicio.markupManual,
+						tipoCliente,
+						servicio.monedaOriginal,
+						tipoCambioReceptivo,
+						tipoCambioContable,
+						servicio.tipoServicio,
+						servicio.servicioProducto
+						);
+						return `${monedaFinal === 'DÓLAR' ? 'U$' : '$'}${Math.round(tarifa).toLocaleString('es-CL')}`;
 						})()}
 						{/key}
 					</td>
 					<td class="px-4 py-2 text-center">
-						<input
-							type="checkbox"
-							checked={serviciosSeleccionados.some((s) => s.id === servicio.id)}
-							on:change={() => toggleServicio(servicio)}
-							class="cursor-pointer"
+						<input type="checkbox" checked={serviciosSeleccionados.some((s)=> s.id === servicio.id)}
+						on:change={() => toggleServicio(servicio)}
+						class="cursor-pointer"
 						/>
 					</td>
 				</tr>
@@ -569,15 +562,15 @@ function groupByProveedor(servicios: any[]) {
 		</table>
 		{/if}
 	</div>
-{/each}
-{:else}
-<div class="mt-8 rounded border border-gray-300 bg-white p-6 text-center text-gray-600 shadow">
-	<p class="mb-2 text-lg font-semibold">No se encontraron servicios que coincidan.</p>
-	<p class="text-sm">
-		Prueba ajustando los filtros como fechas, cantidad de pasajeros, categoría de hotel o rango de precio.
-	</p>
-</div>
-{/if}
+	{/each}
+	{:else}
+	<div class="mt-8 rounded border border-gray-300 bg-white p-6 text-center text-gray-600 shadow">
+		<p class="mb-2 text-lg font-semibold">No se encontraron servicios que coincidan.</p>
+		<p class="text-sm">
+			Prueba ajustando los filtros como fechas, cantidad de pasajeros, categoría de hotel o rango de precio.
+		</p>
+	</div>
+	{/if}
 
 </div>
 

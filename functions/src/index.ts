@@ -1,59 +1,44 @@
 import * as functions from 'firebase-functions';
 import nodemailer from 'nodemailer';
-import { onCall } from 'firebase-functions/v1/https';
+import { onCall, CallableRequest } from 'firebase-functions/v2/https';
 
 interface EnviarCorreoData {
   para: string;
   asunto: string;
   mensaje: string;
-  pdfBase64?: string;
-  nombreArchivo?: string;
 }
 
 export const enviarCorreo = onCall(
-  async (data: EnviarCorreoData, context) => {
-    const { para, asunto, mensaje, pdfBase64, nombreArchivo } = data;
+  async (request: CallableRequest<EnviarCorreoData>) => {
+    const { para, asunto, mensaje } = request.data;
 
     if (!para || !asunto || !mensaje) {
       throw new functions.https.HttpsError('invalid-argument', 'Faltan campos obligatorios');
     }
 
-  const transporter = nodemailer.createTransport({
-  host: 'mail.destinochile.cl',
-  port: 587,
-  secure: false,
-  auth: {
-    user: functions.config().correo.usuario,
-    pass: functions.config().correo.clave
-  }
-});
+    const transporter = nodemailer.createTransport({
+      host: 'mail.destinochile.cl',
+      port: 587,
+      secure: false,
+      auth: {
+        user: functions.config().correo.usuario,
+        pass: functions.config().correo.clave
+      }
+    });
 
-
-    const mailOptions: any = {
+    const mailOptions = {
       from: 'sigtur@destinochile.cl',
       to: para,
       subject: asunto,
       html: mensaje
     };
 
-    if (pdfBase64 && nombreArchivo) {
-      mailOptions.attachments = [
-        {
-          filename: nombreArchivo,
-          content: pdfBase64,
-          encoding: 'base64',
-          contentType: 'application/pdf'
-        }
-      ];
-    }
-
     try {
       await transporter.sendMail(mailOptions);
-      return { success: true, message: 'Correo enviado correctamente' };
+      return { success: true, message: 'Correo enviado correctamente (sin PDF)' };
     } catch (error: any) {
-     console.error('❌ Error completo:', error, error?.response);
-
-      throw new functions.https.HttpsError('internal', error.message);
+      console.error('❌ Error al enviar correo:', error, error?.response);
+      throw new functions.https.HttpsError('internal', error.message || 'Error desconocido');
     }
   }
 );

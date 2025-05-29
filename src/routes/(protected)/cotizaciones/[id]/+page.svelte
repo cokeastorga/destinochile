@@ -47,7 +47,7 @@
                 para: cotizacion.email,
                 asunto: 'Cotización personalizada – Destino Chile',
                 mensaje: 'Estimado cliente, adjuntamos su cotización solicitada.',
-                pdfBlob: pdf
+               // pdfBlob: pdf
             });
             mensaje = 'Correo enviado con éxito';
         } catch (error) {
