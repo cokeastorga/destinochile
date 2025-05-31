@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { auth, db } from '$lib/firebase';
-  import { doc, getDoc, setDoc } from 'firebase/firestore';
+  import { doc, getDoc, getDocs , setDoc, collection, addDoc, serverTimestamp  } from 'firebase/firestore';
   import { onAuthStateChanged } from 'firebase/auth';
   import { goto } from '$app/navigation';
   import { calcularTarifaFinal } from '$lib/stores/precios';
@@ -16,10 +16,10 @@
   };
 
   function agregarFilaVacia() {
-    configuracion.tiposServicio = [
-      ...configuracion.tiposServicio,
-      { categoria: '', servicio: '', markup: 0 }
-    ];
+ configuracion.tiposServicio = [
+  { categoria: '', servicio: '', markup: 0 },
+  ...configuracion.tiposServicio
+];
   }
 
 
@@ -62,6 +62,8 @@
   let error: string | null = null;
   let guardado = false;
   let esSuperAdmin = false;
+  let cambioReceptivo: number = 950;
+let cambioContable: number = 960;
 
   function obtenerMarkupDesdeConfiguracion(tipoServicio: string, servicioProducto: string): number {
     const configuracion = obtenerConfiguracionGlobal(); // tu store o fetch
@@ -77,27 +79,59 @@
 
       const userDoc = await getDoc(doc(db, 'usuarios', user.uid));
       if (!userDoc.exists()) return goto('/login');
-
+  
       esSuperAdmin = userDoc.data().rol === 'SuperAdministrador';
-
+  const historialRef = collection(db, 'configuracion', 'global', 'historial');
+  const historialSnap = await getDocs(historialRef);
+  historial = historialSnap.docs
+    .map(doc => ({ id: doc.id, ...doc.data() }))
+    .sort((a, b) => b.fecha?.seconds - a.fecha?.seconds); // orden descendente por fecha
       const configDoc = await getDoc(doc(db, 'configuracion', 'global'));
-      if (configDoc.exists()) {
-        configuracion = configDoc.data() as Configuracion;
-      }
+    if (configDoc.exists()) {
+  const data = configDoc.data() as Configuracion;
+  configuracion = data;
+  cambioReceptivo = data.cambioReceptivo ?? 950;
+  cambioContable = data.cambioContable ?? 960;
+}
 
       cargando = false;
     });
   });
 
-  async function guardarConfiguracion() {
-    try {
-      await setDoc(doc(db, 'configuracion', 'global'), configuracion);
-      guardado = true;
-      setTimeout(() => (guardado = false), 2000);
-    } catch (err) {
-      error = 'Error al guardar la configuración.';
-    }
+  let historial = [];
+
+ async function guardarConfiguracion() {
+  try {
+    const nuevaConfiguracion: Configuracion = {
+      ...configuracion,
+      cambioReceptivo,
+      cambioContable
+    };
+
+    // Guardar configuración actual
+    await setDoc(doc(db, 'configuracion', 'global'), nuevaConfiguracion);
+
+    // Obtener usuario autenticado actual (ya está autenticado porque es SuperAdmin)
+    const usuarioActual = auth.currentUser;
+    const cambiadoPor = usuarioActual?.email ?? 'usuario-desconocido';
+
+    // Guardar entrada en subcolección historial
+    const historialRef = collection(db, 'configuracion', 'global', 'historial');
+    await addDoc(historialRef, {
+      fecha: serverTimestamp(),
+      cambiadoPor,
+      cambioReceptivo,
+      cambioContable,
+      tiposServicio: [...configuracion.tiposServicio]
+    });
+
+    guardado = true;
+    setTimeout(() => (guardado = false), 2000);
+  } catch (err) {
+    error = 'Error al guardar la configuración.';
+    console.error('Error en guardarConfiguracion:', err);
   }
+}
 
   function eliminarTipo(index: number) {
     configuracion.tiposServicio.splice(index, 1);
@@ -120,6 +154,31 @@
 <hr class="my-1" />
 <div class="max-w-5xl mx-auto p-6">
   <h1 class="text-4xl font-bold mb-8">Configuración Global</h1>
+<div class="mb-8">
+  <h2 class="mb-4 font-semibold text-lg">Tipo de Cambio</h2>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <label class="block mb-1 font-medium text-sm">Cambio Receptivo (CLP → USD)</label>
+      <input
+        type="number"
+        min="1"
+        bind:value={cambioReceptivo}
+        on:input={() => (guardado = false)}
+        class="w-full border px-3 py-2 rounded shadow-sm"
+      />
+    </div>
+    <div>
+      <label class="block mb-1 font-medium text-sm">Cambio Contable (USD → CLP)</label>
+      <input
+        type="number"
+        min="1"
+        bind:value={cambioContable}
+        on:input={() => (guardado = false)}
+        class="w-full border px-3 py-2 rounded shadow-sm"
+      />
+    </div>
+  </div>
+</div>
 
 
   {#if error}
@@ -133,13 +192,18 @@
   <div class="mb-6">
     <h2 class="block mb-8 font-semibold">Tipos de Servicio y Markup Global</h2>
 {#if esSuperAdmin}
-<div class="flex justify-end mb-4">
+<div class="flex  justify-between mb-4">
   <button on:click={agregarFilaVacia} class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
     + Agregar nuevo tipo de servicio
   </button>
-</div>
-{/if}
 
+
+
+    <button on:click={guardarConfiguracion} class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+      Guardar configuración
+    </button>
+    </div>
+    {/if}
 
     <table class="w-full text-sm mb-4">
       <thead>
@@ -188,14 +252,23 @@
       </tbody>
     </table>
 
-    {#if esSuperAdmin}
-    <button on:click={guardarConfiguracion} class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-      Guardar configuración
-    </button>
-    {/if}
+   
   </div>
 </div>
 {/if}
+{#if historial.length > 0}
+  <div class="mt-10">
+    <h2 class="text-xl font-semibold mb-4">Historial de Configuraciones</h2>
+    <ul class="text-sm space-y-2">
+      {#each historial as h}
+        <li class="border-b pb-2">
+          <strong>{h.fecha?.toDate().toLocaleString()}</strong> — {h.cambiadoPor}
+        </li>
+      {/each}
+    </ul>
+  </div>
+{/if}
+
 
 <style>
   :global(body) {

@@ -38,8 +38,8 @@
 	let servicio = '';
 
 	let markups: any[] = [];
-	let tipoCambioReceptivo = 950; // Puedes ajustar el valor predeterminado
-	let tipoCambioContable = 960; // Puedes ajustar el valor predeterminado
+let tipoCambioReceptivo: number;
+let tipoCambioContable: number;
 
 	let configuraciones: any[] = [];
 	let tiposDeServicio: string[] = [];

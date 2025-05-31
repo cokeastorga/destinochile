@@ -1,6 +1,6 @@
 import * as functions from 'firebase-functions';
+import { onCall } from 'firebase-functions/v2/https';
 import nodemailer from 'nodemailer';
-import { onCall, CallableRequest } from 'firebase-functions/v2/https';
 
 interface EnviarCorreoData {
   para: string;
@@ -8,8 +8,8 @@ interface EnviarCorreoData {
   mensaje: string;
 }
 
-export const enviarCorreo = onCall(
-  async (request: CallableRequest<EnviarCorreoData>) => {
+export const enviarCorreo = onCall<EnviarCorreoData>(
+  async (request) => {
     const { para, asunto, mensaje } = request.data;
 
     if (!para || !asunto || !mensaje) {
@@ -37,7 +37,7 @@ export const enviarCorreo = onCall(
       await transporter.sendMail(mailOptions);
       return { success: true, message: 'Correo enviado correctamente (sin PDF)' };
     } catch (error: any) {
-      console.error('❌ Error al enviar correo:', error, error?.response);
+      console.error('❌ Error completo:', error, error?.response);
       throw new functions.https.HttpsError('internal', error.message || 'Error desconocido');
     }
   }

@@ -18,9 +18,9 @@ export const db = getFirestore(app);
 export const functions = getFunctions(app, 'us-central1');
 
 // ✅ Solo conectar el emulador en el navegador
-if (typeof window !== 'undefined' && location.hostname === 'localhost') {
-  connectFunctionsEmulator(functions, 'localhost', 5001);
-}
+//if (typeof window !== 'undefined' && location.hostname === 'localhost') {
+  //connectFunctionsEmulator(functions, 'localhost', 5001);
+//}
 
 setPersistence(auth, browserLocalPersistence)
   .then(() => {

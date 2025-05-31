@@ -25,38 +25,44 @@
         return '-';
     }
 
-    async function handleEnviarCorreo() {
-        enviandoCorreo = true;
-        mensaje = '';
-        const auth = getAuth();
-        const usuarioActual = auth.currentUser?.email || 'usuario_desconocido';
-        await updateDoc(doc(db, 'cotizaciones', cotizacion.id), {
-            enviadaEl: Timestamp.now(),
-            seguimientoRealizado: false,
-            eventos: arrayUnion({
-                tipo: 'enviada',
-                fecha: Timestamp.now(),
-                usuario: usuarioActual,
-                comentario: 'Cotización enviada por correo'
-            })
-        });
+ async function handleEnviarCorreo() {
+  enviandoCorreo = true;
+  mensaje = '';
 
-        try {
-            const pdf = await generarPDFDesdeHtml('vista-pdf');
-            await enviarCotizacionPorCorreo({
-                para: cotizacion.email,
-                asunto: 'Cotización personalizada – Destino Chile',
-                mensaje: 'Estimado cliente, adjuntamos su cotización solicitada.',
-               // pdfBlob: pdf
-            });
-            mensaje = 'Correo enviado con éxito';
-        } catch (error) {
+  const auth = getAuth();
+  const usuarioActual = auth.currentUser?.email || 'usuario_desconocido';
+
+  // Actualiza el documento en Firestore
+  await updateDoc(doc(db, 'cotizaciones', cotizacion.id), {
+    enviadaEl: Timestamp.now(),
+    seguimientoRealizado: false,
+    eventos: arrayUnion({
+      tipo: 'enviada',
+      fecha: Timestamp.now(),
+      usuario: usuarioActual,
+      comentario: 'Cotización enviada por correo'
+    })
+  });
+
+  try {
+    const pdf = await generarPDFDesdeHtml('vista-pdf'); // genera Blob desde HTML
+    await enviarCotizacionPorCorreo({
+      para: cotizacion.email,
+      asunto: 'Cotización personalizada – Destino Chile',
+      mensaje: 'Estimado cliente, adjuntamos su cotización solicitada.',
+      pdfBlob: pdf, // ✅ Aquí se adjunta el PDF
+      nombreArchivo: `CT-${cotizacion.id}.pdf`
+    });
+    mensaje = 'Correo enviado con éxito';
+  } catch (error) {
     console.error('❌ Error completo al enviar:', error);
     mensaje = `Error al enviar el correo: ${error?.message || error}`;
-        } finally {
-            enviandoCorreo = false;
-        }
-    }
+  } finally {
+    enviandoCorreo = false;
+  }
+}
+
+
 
     async function cargarCotizacion(id: string) {
         const ref = doc(db, 'cotizaciones', id);
