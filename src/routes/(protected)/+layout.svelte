@@ -28,9 +28,12 @@
   </div>
   <slot />
 </Sidebar>
-
+<div class="hidden">
+  <span class="text-2xl bg-amber-100 text-gray-900"></span>
+</div>
 <style>
   :global(body) {
     @apply bg-gray-100;
   }
+  
 </style>
