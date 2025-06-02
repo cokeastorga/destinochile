@@ -4,12 +4,21 @@ import html2pdf from 'html2pdf.js';
  * Estilos críticos que deben incluirse en el PDF, para evitar purgado de Tailwind o Vite.
  */
 const ESTILOS_PDF = `
-  body { font-size: 9pt; color: #1f2937; background: white; }
-  .pdf-rendering { padding: 10mm; background: white; width: 190mm; }
+  body {
+    font-size: 8pt; /* Reduces base font */
+    color: #1f2937;
+    background: white;
+  }
+
+  .pdf-rendering {
+    padding: 5mm;
+    background: white;
+    width: 180mm;
+  }
 
   .pdf-rendering table {
     border: 0.5pt solid #d1d5db;
-    font-size: 6.5pt;
+    font-size: 6pt; /* Más compacto */
     border-collapse: collapse;
     width: 100%;
     table-layout: fixed;
@@ -18,8 +27,8 @@ const ESTILOS_PDF = `
 
   .pdf-rendering th, .pdf-rendering td {
     border: 0.5pt solid #d1d5db;
-    padding: 2pt 3pt;
-    text-align: left;
+    padding: 2pt 2pt; /* Reduce paddings */
+    text-align: center;
     vertical-align: top;
   }
 
@@ -28,10 +37,11 @@ const ESTILOS_PDF = `
     font-weight: 600;
   }
 
-  .text-2xl { font-size: 12pt; }
+  .text-2xl { font-size: 11pt; }
   .bg-amber-100 { background-color: #fef3c7; color: #92400e; }
-  img { max-height: 35pt; width: auto; }
+  img { max-height: 30pt; width: auto; }
 `;
+
 
 
 /**
@@ -61,7 +71,7 @@ function prepararHTMLParaPDF(elementId: string): HTMLElement {
  */
 function getOpcionesComunes() {
   return {
-    margin: [10, 10, 10, 10],
+    margin: [5, 5, 5, 5],
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: {
       scale: 2,

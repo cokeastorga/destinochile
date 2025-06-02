@@ -591,6 +591,17 @@ let tipoCambioContable: number;
 		overflow: hidden;
 	}
 
+	
+	table {
+		width: 100%;
+		background-color: white;
+		color: black;
+		border-collapse: collapse;
+		margin-top: 1rem;
+		border-radius: 0.5rem;
+		overflow: hidden;
+	}
+
 	thead {
 		background-color: #f3f4f6;
 		/* gris clarito */

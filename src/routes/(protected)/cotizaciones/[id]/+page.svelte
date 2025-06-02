@@ -120,24 +120,24 @@
   }
 
   @media print {
-    #vista-pdf {
-      box-shadow: none !important;
-      padding: 10mm !important;
-      margin: 0 !important;
-      width: 100% !important;
-      max-width: 190mm !important;
-      background: #ffffff !important;
-    }
+     #vista-pdf {
+            box-shadow: none !important;
+            padding: 5mm !important;
+            margin: 0 !important;
+            width: 180mm !important;
+            max-width: 180mm !important;
+            background: #ffffff !important;
+            font-size: 8pt !important;
+        }
 
     table, .no-break {
       page-break-inside: avoid !important;
     }
 
-    body {
-      font-size: 10pt !important;
-      color: #1f2937 !important;
-      background: #ffffff !important;
-    }
+  body {
+            color: #1f2937 !important;
+            background: #ffffff !important;
+        }
 
     .no-print {
       display: none !important;
@@ -146,14 +146,16 @@
     table {
       border-collapse: collapse;
       width: 100%;
-      font-size: 8pt !important;
+      font-size: 6.5pt !important;
     }
 
-    th, td {
-      border: 0.5pt solid #d1d5db !important;
-      padding: 4pt !important;
-      text-align: left;
-    }
+ th, td {
+            border: 0.5pt solid #d1d5db !important;
+            padding: 2pt !important;
+            text-align: left;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
 
     th {
       background-color: #f3f4f6 !important;
@@ -166,15 +168,15 @@
     }
 
     h1 {
-      font-size: 16pt !important;
+      font-size: 14pt !important;
     }
 
     h3 {
-      font-size: 12pt !important;
+      font-size: 10pt !important;
     }
 
     .text-2xl {
-      font-size: 14pt !important;
+      font-size: 12pt !important;
     }
 
     .bg-amber-100 {
@@ -183,23 +185,26 @@
     }
   }
 
-  .pdf-rendering {
-    box-shadow: none !important;
-    padding: 10mm !important;
-    background: #ffffff !important;
-    width: 190mm !important;
-  }
+ .pdf-rendering {
+        box-shadow: none !important;
+        padding: 10mm !important;
+        background: #ffffff !important;
+        width: 190mm !important;
+        font-size: 9pt !important;
+    }
 
-  .pdf-rendering table {
-    border: 0.5pt solid #d1d5db !important;
-    font-size: 8pt !important;
-  }
+.pdf-rendering table {
+        border: 0.5pt solid #d1d5db !important;
+        font-size: 7pt !important;
+    }
 
   .pdf-rendering th,
-  .pdf-rendering td {
-    border: 0.5pt solid #d1d5db !important;
-    padding: 4pt !important;
-  }
+    .pdf-rendering td {
+        border: 0.5pt solid #d1d5db !important;
+        padding: 3pt !important;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
 
   .pdf-rendering th {
     background-color: #f3f4f6 !important;
@@ -312,10 +317,10 @@
     {/if}
 
     <!-- Vista para PDF -->
-    <div id="vista-pdf" class="bg-white p-8 max-w-6xl mx-auto rounded-xl shadow-lg print:shadow-none print:p-4">
+    <div id="vista-pdf" class="bg-white p-6 max-w-6xl mx-auto rounded-xl shadow-lg print:shadow-none print:p-4">
       <!-- Encabezado -->
       <div class="flex justify-between items-center border-b border-gray-200 pb-6 mb-8">
-        <div class="flex items-center gap-6">
+        <div class="flex items-center gap-4">
           <img src="/logo.jpg" alt="Destino Chile" class="h-16 w-auto object-contain" />
           <div>
             <p class="text-sm text-gray-500">Cotización</p>
@@ -328,6 +333,7 @@
         </div>
       </div>
       <hr class="my-4" />
+
       <!-- Datos del cliente -->
       <section class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 ml-4 text-sm">
         <div>
@@ -373,63 +379,58 @@
       </section>
       
       <hr class="my-4" />
-      <hr class="my-4" />
-      <!-- Servicios -->
-      <h3 class="text-xl font-semibold text-gray-900 mb-4 border-b border-gray-200 pb-3 no-break">Servicios seleccionados</h3>
-      <div class="overflow-x-auto mb-8">
-        <table class="w-full text-sm text-gray-700 border border-gray-200 rounded-lg no-break">
-          <thead class="bg-gray-50 text-gray-600">
-            <tr>
-              <th class="px-2 py-1 text-center font-semibold">Proveedor</th>
-              <th class="px-2 py-1 text-center font-semibold">Servicio</th>
+   
+              <h3 class="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-2 no-break">Servicios Seleccionados</h3>
+            <div class="overflow-x-auto items-center text-center mb-6">
+                <table class="w-full text-xs text-center items-center text-gray-700 border border-gray-200 rounded-lg no-break">
+                    <thead class="bg-gray-50 text-gray-600">
+                        <tr>
+                            <th class="px-2 py-1 items-center text-center font-semibold w-[50px]">Proveedor</th>
+                            <th class="px-2 py-1 items-center text-center font-semibold w-[42px]">Servicio</th>
+                            <th class="px-2 py-1 items-center text-center font-semibold w-[25px]">Temp</th>
+                            <th class="px-2 py-1 items-center text-center font-semibold w-[55px]">Nombre</th>
+                            <th class="px-2 py-1 items-center text-center font-semibold w-[42px]">Habitación</th>
+                        
+                            <th class="px-2 py-1 items-center text-center font-semibold w-[180px]">Descripción</th>
+                            <th class="px-2 py-1 items-center text-center font-semibold w-[30px]">Noches</th>
+                            <th class="px-2 py-1 items-center text-center font-semibold w-[25px]">Cant/ Hab.</th>
+                            <th class="px-5 py-2 items-center text-center font-semibold w-[45px]">Check-in</th>
+                            <th class="px-5 py-2 items-center text-center font-semibold w-[45px]">Check-out</th>
+                            <th class="px-2 py-1 text-center items-center font-semibold w-[35px]">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each cotizacion.servicios ?? [] as s, i}
+                            <tr class="{i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100 transition">
+                                <td class="border px-2 py-1 items-center text-center">{s.proveedor || '-'}</td>
+                                <td class="border px-2 py-1 items-center text-center">{s.servicioProducto || '-'}</td>
+                                <td class="border px-2 py-1 items-center text-center">{s.temporada || '-'}</td>
+                                <td class="border px-2 py-1 items-center text-center">{s.tipoServicio || '-'}</td>
+                                <td class="border px-2 py-1 items-center text-center">{s.tipoHabitacion || '-'}</td>
+                                <td class="border px-2 py-1 items-center text-center">{s.descripcion || '-'}</td>
+                                <td class="border px-2 py-1 items-center text-center">{s.noches || '-'}</td>
+                                <td class="border px-2 py-1 items-center text-center">{s.habitaciones || '-'}</td>
+                                <td class="border px-4 py-2 items-center text-center">{s.checkin || '-'}</td>
+                                <td class="border px-4 py-2 items-center text-center">{s.checkout || '-'}</td>
+                                <td class="border px-2 py-1 items-center text-center">${(s.subtotal || 0).toLocaleString('es-CL')}</td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+            </div>
 
-              <th class="px-2 py-1 text-center font-semibold">Producto</th>
-              <th class="px-2 py-1 text-center font-semibold">Habitación</th>
-              <th class="px-2 py-1 text-center font-semibold">Nombre</th>
-              <th class="px-2 py-1 text-center font-semibold">Descripción</th>
-         <!--     <th class="px-2 py-1 text-center font-semibold">HalfDay/ FullDay</th>
-              <th class="px-2 py-1 text-center font-semibold">Tipo Tour</th> -->
-              <th class="px-2 py-1 text-center font-semibold">Cant/ Noches</th>
-              <th class="px-2 py-1 text-center font-semibold">Cant/ Habs</th>
-              <th class="px-2 py-1 text-center font-semibold">Temp</th>
-              <th class="px-6 py-1 text-center font-semibold">Check-in</th>
-              <th class="px-6 py-1 text-center font-semibold">Check-out</th>
-              <th class="px-2 py-1 text-center font-semibold">Subtotal</th>
-            </tr>
-          </thead>
-          <tbody>
-            {#each cotizacion.servicios ?? [] as s, i}
-              <tr class="{i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-gray-100 transition duration-150">
-                <td class="border text-center px-2 py-1">{s.proveedor}</td>
-                <td class="border text-center px-2 py-1">{s.servicioProducto}</td>
-                <td class="border text-center px-2 py-1">{s.tipoServicio}</td>
-                <td class="border text-center px-2 py-1">{s.tipoHabitacion}</td>
-                <td class="border text-center px-2 py-1">{s.nombreProducto}</td>
-                <td class="border text-center px-2 py-1">{s.descripcion}</td>
-            <!--     <td class="border text-center px-2 py-1">{s.halfDay}</td>
-                <td class="border text-center px-2 py-1">{s.tourPrivado}</td>-->
-                <td class="border text-center px-2 py-1">{s.noches}</td>
-                <td class="border text-center px-2 py-1">{s.habitaciones}</td>
-                <td class="border text-center px-2 py-1">{s.temporada}</td>
-                <td class="border text-center px-2 py-1">{s.checkin}</td>
-                <td class="border text-center px-2 py-1">{s.checkout}</td>
-                <td class="border text-center px-2 py-1 text-right">${(s.subtotal || 0).toLocaleString('es-CL')}</td>
-              </tr>
-            {/each}
-          </tbody>
-        </table>
-      </div>
+       
 
-      <!-- Total -->
-      <div class="text-right text-2xl font-bold text-gray-900 mb-10 no-break">
-        Total: ${cotizacion.totalGeneral.toLocaleString('es-CL')}
-      </div>
+            <!-- Total -->
+            <div class="text-right text-xl font-bold text-gray-900 mb-6 no-break">
+                Total: ${cotizacion.totalGeneral?.toLocaleString('es-CL') || '0'}
+            </div>
       <hr class="my-4" />
       <!-- Observaciones -->
       <div class="bg-gray-50 border-l-4 border-indigo-400 p-6 text-sm rounded-lg mb-8 no-break">
         <p class="font-semibold text-gray-700">Nota:</p>
         <p class="text-gray-600">Esta cotización es referencial y puede cambiar sin previo aviso.</p>
-        <p class="text-gray-600">Tarifas sujetas a disponibilidad al momento de confirmar la reserva.</p>
+        <p class="text-gray-600">Tarifas sujetas a disponibilidad al momento de confirmar la cotizacion.</p>
       </div>
 
       <!-- Historial -->

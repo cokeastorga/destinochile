@@ -192,7 +192,7 @@
             font-weight: 600;
         }
         img {
-            max-height: 30pt !important;
+            max-height: 40pt !important;
             width: auto !important;
         }
         h1 {
@@ -332,10 +332,10 @@
             <!-- Header -->
             <div class="flex justify-between items-center border-b border-gray-200 pb-4 mb-6">
                 <div class="flex items-center gap-4">
-                    <img src="/logo.jpg" alt="Destino Chile" class="h-12 w-auto object-contain" />
+                    <img src="/logo.jpg" alt="Destino Chile" class="h-16 w-auto object-contain" />
                     <div>
                         <p class="text-sm text-gray-500">Reservación</p>
-                        <h1 class="text-2xl font-bold text-gray-900">FF-DCH{reserva.id.slice(-4)}</h1>
+                        <h1 class="text-3xl font-bold text-gray-900">FF-DCH{reserva.id.slice(-4)}</h1>
                     </div>
                 </div>
                 <div class="text-right">
@@ -343,43 +343,58 @@
                     <p class="text-md font-medium text-gray-900">{new Date().toLocaleDateString('es-CL')}</p>
                 </div>
             </div>
+        <hr class="my-4" />
 
             <!-- Client Details -->
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-8 text-sm">
-                <div>
-                    <span class="font-semibold text-gray-600">Correo Cliente:</span>
-                    <p class="text-gray-900">{reserva.email}</p>
-                </div>
-                <div>
-                    <span class="font-semibold text-gray-600">Ejecutivo Responsable:</span>
-                    <p class="text-gray-900">{reserva.ejecutivo}</p>
-                </div>
-                <div>
-                    <span class="font-semibold text-gray-600">Tipo Cliente:</span>
-                    <p class="text-gray-900">{reserva.tipoCliente}</p>
-                </div>
-                <div>
-                    <span class="font-semibold text-gray-600">Ciudad de Destino:</span>
-                    <p class="text-gray-900">{reserva.destino}</p>
-                </div>
-                <div>
-                    <span class="font-semibold text-gray-600">Check-in:</span>
-                    <p class="text-gray-900">{formatear(reserva.fechaInicio)}</p>
-                </div>
-                <div>
-                    <span class="font-semibold text-gray-600">Check-out:</span>
-                    <p class="text-gray-900">{formatear(reserva.fechaFin)}</p>
-                </div>
-                <div>
-                    <span class="font-semibold text-gray-600">Cantidad de Pasajeros:</span>
-                    <p class="text-gray-900">{reserva.cantidadPasajeros}</p>
-                </div>
-                <div>
-                    <span class="font-semibold text-gray-600">Estado:</span>
-                    <span class="inline-block px-2 py-1 text-xs font-medium text-amber-800 bg-amber-100 rounded-full">{reserva.estado}</span>
-                </div>
-            </section>
-
+          <!-- Datos del cliente -->
+      <section class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 ml-4 text-sm">
+        <div>
+          <span class="font-semibold text-center text-gray-600">Correo Cliente:</span>
+          <p class="text-gray-900">{reserva.email}</p>
+        </div>
+        <div>
+          <span class="font-semibold text-center text-gray-600">Ejecutivo Responsable:</span>
+          <p class="text-gray-900">{reserva.ejecutivo}</p>
+        </div>
+         <div>
+          <span class="font-semibold text-center text-gray-600">Referencia:</span>
+          <p class="text-gray-900">{reserva.referenciaPasajero}</p>
+        </div>
+        <div>
+          <span class="font-semibold text-center text-gray-600">Tipo Cliente:</span>
+          <p class="text-gray-900">{reserva.tipoCliente}</p>
+        </div>
+        <div>
+          <span class="font-semibold text-center text-gray-600">Cantidad de Pasajeros:</span>
+          <p class="text-gray-900">{reserva.cantidadPasajeros}</p>
+        </div>
+         <div>
+          <span class="font-semibold text-center text-gray-600">Estado:</span>
+          <span class="inline-block px-3 py-1 text-sm font-medium text-amber-800 bg-amber-100 rounded-full">{reserva.estado}</span>
+        </div>
+        
+         <div>
+          <span class="font-semibold text-center text-gray-600">Ciudad de Destino:</span>
+          <p class="text-gray-900">{reserva.destino}</p>
+        </div>
+        <div>
+          <span class="font-semibold text-center text-gray-600">Check-in:</span>
+          <p class="text-gray-900">{formatear(reserva.fechaInicio)}</p>
+        </div>
+        <div>
+          <span class="font-semibold text-center text-gray-600">Check-out:</span>
+          <p class="text-gray-900">{formatear(reserva.fechaFin)}</p>
+        </div>
+       
+             <!-- Passengers -->
+            {#if pasajeros.length > 0}
+                <h3 class="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-2 no-break">Lista de Pasajeros</h3>
+                <DetallePasajeros {pasajeros} />
+            {/if}
+       
+      </section>
+<hr class="my-4" />
+     <hr class="my-4" />
             <!-- Services -->
             <h3 class="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-2 no-break">Servicios Seleccionados</h3>
             <div class="overflow-x-auto mb-6">
@@ -389,9 +404,10 @@
                             <th class="px-2 py-1 font-semibold w-[80px]">Proveedor</th>
                             <th class="px-2 py-1 font-semibold w-[70px]">Servicio</th>
                             <th class="px-2 py-1 font-semibold w-[50px]">Temporada</th>
-                            <th class="px-2 py-1 font-semibold w-[70px]">Tipo</th>
-                            <th class="px-2 py-1 font-semibold w-[60px]">Habitación</th>
-                            <th class="px-2 py-1 font-semibold w-[80px]">Nombre</th>
+                            <th class="px-2 py-1 font-semibold w-[70px]">Producto</th>
+                                <th class="px-2 py-1 font-semibold w-[80px]">Nombre</th>
+                            <th class="px-2 py-1 font-semibold w-[60px]">Tipo Habitación</th>
+                        
                             <th class="px-2 py-1 font-semibold w-[100px]">Descripción</th>
                             <th class="px-2 py-1 font-semibold w-[50px]">Noches</th>
                             <th class="px-2 py-1 font-semibold w-[50px]">Hab.</th>
@@ -407,8 +423,8 @@
                                 <td class="border px-2 py-1">{s.servicioProducto || '-'}</td>
                                 <td class="border px-2 py-1">{s.temporada || '-'}</td>
                                 <td class="border px-2 py-1">{s.tipoServicio || '-'}</td>
+                                  <td class="border px-2 py-1">{s.nombreProducto || '-'}</td>
                                 <td class="border px-2 py-1">{s.tipoHabitacion || '-'}</td>
-                                <td class="border px-2 py-1">{s.nombreProducto || '-'}</td>
                                 <td class="border px-2 py-1">{s.descripcion || '-'}</td>
                                 <td class="border px-2 py-1">{s.noches || '-'}</td>
                                 <td class="border px-2 py-1">{s.habitaciones || '-'}</td>
@@ -421,11 +437,7 @@
                 </table>
             </div>
 
-            <!-- Passengers -->
-            {#if pasajeros.length > 0}
-                <h3 class="text-lg font-semibold text-gray-900 mb-3 border-b border-gray-200 pb-2 no-break">Lista de Pasajeros</h3>
-                <DetallePasajeros {pasajeros} />
-            {/if}
+       
 
             <!-- Total -->
             <div class="text-right text-xl font-bold text-gray-900 mb-6 no-break">
