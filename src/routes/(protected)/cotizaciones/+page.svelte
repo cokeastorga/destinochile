@@ -3,7 +3,7 @@
 	import { db } from '$lib/firebase';
 	import { collection, getDocs, doc, getDoc } from 'firebase/firestore';
 	import ServiciosSeleccionados from '$lib/components/ServiciosSeleccionados.svelte';
-	import { calcularTarifaFinal } from '$lib/stores/precios';
+	import { calcularTarifaFinal, calcularSubtotalServicio } from '$lib/stores/precios';
 	import SearchFilter from '$lib/components/SearchFilters.svelte';
 	import ClientSelector from '$lib/components/ClientSelector.svelte';
 	import { setDoc, serverTimestamp } from 'firebase/firestore';
@@ -88,7 +88,8 @@ let tipoCambioContable: number;
 
 			if (snap.exists()) {
 				const data = snap.data();
-
+				
+				
 				clienteSeleccionado = data.clienteId || '';
 				destino = data.destino || '';
 				fechaInicio = data.fechaInicio || '';
@@ -101,25 +102,34 @@ let tipoCambioContable: number;
 
 				if (Array.isArray(data.servicios)) {
 					serviciosSeleccionados = data.servicios.map((s) => {
-						const { tarifa } = calcularTarifaFinal(
-							s.tarifaNeta ?? s.tarifa_neta ?? 0,
-							s.markupManual ?? 0.8,
-							tipoCliente,
-							s.monedaOriginal ?? '',
-							tipoCambioReceptivo,
-							tipoCambioContable,
-							s.tipoServicio ?? '',
-							s.servicioProducto ?? ''
-						);
+						const servicio = {
+							...s,
+						tarifaNeta: ( s.tarifaNeta ?? 0),
+			moneda: s.monedaOriginal ?? s.moneda ?? '',
+			noches: Number(s.noches ?? 1),
+			habitaciones: Number(s.habitaciones ?? 1),
+			markupManual: Number(s.markupManual ?? 0.8),
+			tipoServicio: s.tipoServicio ?? '',
+			servicioProducto: s.servicioProducto ?? ''
+		};
+			const { subtotal } = calcularSubtotalServicio(
+			servicio,
+			tipoCliente,
+			tipoCambioReceptivo,
+			tipoCambioContable
+		);
 						const noches = Number(s.noches ?? 1);
 						const habitaciones = Number(s.habitaciones ?? 1);
-						const subtotal = Math.round(tarifa * noches * habitaciones);
+
 
 						return {
 							...s,
 							noches,
 							habitaciones,
-							subtotal
+							subtotal,
+							tarifaNeta: servicio.tarifaNeta,
+							monedaOriginal: servicio.moneda
+							
 						};
 					});
 				}
@@ -149,10 +159,10 @@ let tipoCambioContable: number;
 
 		const serviciosConSubtotales = serviciosSeleccionados
 
-			.filter((s) => s && (s.tarifaNeta !== undefined || s.tarifa_neta !== undefined))
+			.filter((s) => s && (s.tarifaNeta !== undefined))
 			.map((s) => {
 				const { tarifa } = calcularTarifaFinal(
-					s.tarifaNeta ?? s.tarifa_neta ?? 0,
+					Number(s.tarifaNeta ?? 0),
 					s.markupManual,
 					tipoCliente,
 					s.monedaOriginal,
@@ -178,7 +188,7 @@ let tipoCambioContable: number;
 					halfDay: s.halfDay ?? '',
 					temporada: s.temporada ?? '',
 					descripcion: s.descripcion ?? '',
-					tarifaNeta: s.tarifa_neta ?? 0,
+					tarifaNeta: s.tarifaNeta ?? 0,
 					monedaOriginal: s.monedaOriginal ?? '',
 					markupManual: s.markupManual ?? 0.8,
 					noches: s.noches ?? 1,
@@ -369,7 +379,7 @@ let tipoCambioContable: number;
 					id: docu.id,
 					proveedor: data.PROVEEDOR,
 					descripcion: data.DESCRIPCIÓN,
-					tarifa_neta: data['TARIFA NETA'],
+					tarifaNeta: data['TARIFA NETA'],
 					monedaOriginal: data.MONEDA,
 					moneda: monedaFinal,
 					ciudad: data['CIUDAD'],
@@ -532,12 +542,12 @@ let tipoCambioContable: number;
 					<td class="text-center px-2 py-1">{servicio.descripcion}</td>
 					<td class="text-center px-2 py-1">{servicio.temporada}</td>
 					<!--	<td class="text-center px-2 py-1">{servicio.monedaOriginal}</td>-->
-					<!--		<td class="text-center px-2 py-1">{servicio.tarifa_neta} {servicio.monedaOriginal}</td> -->
+					<!--		<td class="text-center px-2 py-1">{servicio.tarifaNeta} {servicio.monedaOriginal}</td> -->
 					<td class="text-center px-4 py-2">
 						{#key servicio.id}
 						{(() => {
 						const { tarifa, monedaFinal } = calcularTarifaFinal(
-						servicio.tarifa_neta,
+						servicio.tarifaNeta,
 						servicio.markupManual,
 						tipoCliente,
 						servicio.monedaOriginal,

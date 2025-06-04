@@ -85,54 +85,64 @@
 	const editId = params.get('edit');
 
 	if (editId) {
-		editando = true;
-		idReserva = editId;
+			editando = true;
+			idCotizacion = editId;
 
-		const ref = doc(db, 'reservas', editId);
-		const snap = await getDoc(ref);
+			const ref = doc(db, 'reservas', editId);
+			const snap = await getDoc(ref);
 
-		if (snap.exists()) {
-			const data = snap.data();
+			if (snap.exists()) {
+				const data = snap.data();
+				
+				
+				clienteSeleccionado = data.clienteId || '';
+				destino = data.destino || '';
+				fechaInicio = data.fechaInicio || '';
+				fechaFin = data.fechaFin || '';
+				tipoCliente = data.tipoCliente || 'Extranjero';
+				email = data.email || '';
+				ejecutivo = data.ejecutivo || '';
+				referenciaPasajero = data.referenciaPasajero || '';
+				cantidadPasajeros = data.cantidadPasajeros || 1;
 
-			clienteSeleccionado = data.clienteId || '';
-			destino = data.destino || '';
-			fechaInicio = data.fechaInicio || '';
-			fechaFin = data.fechaFin || '';
-			tipoCliente = data.tipoCliente || 'Extranjero';
-			email = data.email || '';
-			ejecutivo = data.ejecutivo || '';
-			referenciaPasajero = data.referenciaPasajero || '';
-			cantidadPasajeros = data.cantidadPasajeros || 1;
+				if (Array.isArray(data.servicios)) {
+					serviciosSeleccionados = data.servicios.map((s) => {
+						const servicio = {
+							...s,
+						tarifaNeta: ( s.tarifaNeta ?? 0),
+			moneda: s.monedaOriginal ?? s.moneda ?? '',
+			noches: Number(s.noches ?? 1),
+			habitaciones: Number(s.habitaciones ?? 1),
+			markupManual: Number(s.markupManual ?? 0.8),
+			tipoServicio: s.tipoServicio ?? '',
+			servicioProducto: s.servicioProducto ?? ''
+		};
+			const { subtotal } = calcularSubtotalServicio(
+			servicio,
+			tipoCliente,
+			tipoCambioReceptivo,
+			tipoCambioContable
+		);
+						const noches = Number(s.noches ?? 1);
+						const habitaciones = Number(s.habitaciones ?? 1);
 
-			if (Array.isArray(data.servicios)) {
-				serviciosSeleccionados = data.servicios.map((s) => {
-					const { tarifa } = calcularTarifaFinal(
-						s.tarifaNeta ?? s.tarifa_neta ?? 0,
-						s.markupManual ?? 0.8,
-						tipoCliente,
-						s.monedaOriginal ?? '',
-						tipoCambioReceptivo,
-						tipoCambioContable,
-						s.tipoServicio ?? '',
-						s.servicioProducto ?? ''
-					);
-					const noches = Number(s.noches ?? 1);
-					const habitaciones = Number(s.habitaciones ?? 1);
-					const subtotal = Math.round(tarifa * noches * habitaciones);
 
-					return {
-						...s,
-						noches,
-						habitaciones,
-						subtotal
-					};
-				});
+						return {
+							...s,
+							noches,
+							habitaciones,
+							subtotal,
+							tarifaNeta: servicio.tarifaNeta,
+							monedaOriginal: servicio.moneda
+							
+						};
+					});
+				}
+			} else {
+				console.warn(`No se encontró la cotización con ID ${editId}`);
 			}
-		} else {
-			console.warn(`No se encontró la reserva con ID ${editId}`);
 		}
-	}
-});
+	});
 
 
 
